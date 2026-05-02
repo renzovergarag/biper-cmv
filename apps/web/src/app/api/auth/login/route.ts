@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { verifyPassword, generateToken } from "@/lib/auth";
+import { generateToken } from "@/lib/auth";
+import { verifyPassword } from "@/lib/password";
 import { z } from "zod";
 
 const loginSchema = z.object({
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const token = generateToken({
+    const token = await generateToken({
       sub: user.id,
       email: user.email,
       rol: user.rol,

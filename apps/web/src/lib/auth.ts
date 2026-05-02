@@ -1,6 +1,5 @@
-import jwt, { SignOptions } from "jsonwebtoken";
-import bcrypt from "bcrypt";
 import { Rol } from "@prisma/client";
+import { jwtVerify, SignJWT } from "jose";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
@@ -24,53 +23,76 @@ interface InternalJWTPayload {
   exp: number;
 }
 
-function getSecret(): string {
+function getSecret(): Uint8Array {
   if (!JWT_SECRET) {
     throw new Error("JWT_SECRET environment variable is required");
   }
-  return JWT_SECRET;
+  return new TextEncoder().encode(JWT_SECRET);
 }
 
-export function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, 10);
+function parseDuration(duration: string): number {
+  const match = duration.match(/^(\d+)([dhms])$/);
+  if (!match) return 7 * 24 * 60 * 60;
+
+  const value = parseInt(match[1], 10);
+  const unit = match[2];
+
+  switch (unit) {
+    case "d": return value * 24 * 60 * 60;
+    case "h": return value * 60 * 60;
+    case "m": return value * 60;
+    case "s": return value;
+    default: return 7 * 24 * 60 * 60;
+  }
 }
 
-export function verifyPassword(
-  password: string,
-  hash: string
-): Promise<boolean> {
-  return bcrypt.compare(password, hash);
+export async function generateToken(payload: Omit<JWTPayload, "iat" | "exp">): Promise<string> {
+  const expiresIn = parseDuration(JWT_EXPIRES_IN);
+  return new SignJWT({ email: payload.email, rol: payload.rol })
+    .setProtectedHeader({ alg: "HS256" })
+    .setSubject(payload.sub)
+    .setIssuedAt()
+    .setExpirationTime(Math.floor(Date.now() / 1000) + expiresIn)
+    .sign(getSecret());
 }
 
-export function generateToken(payload: Omit<JWTPayload, "iat" | "exp">): string {
-  return jwt.sign(payload, getSecret(), { expiresIn: JWT_EXPIRES_IN, algorithm: "HS256" } as SignOptions);
-}
-
-export function verifyToken(token: string): JWTPayload | null {
+export async function verifyToken(token: string): Promise<JWTPayload | null> {
   try {
-    return jwt.verify(token, getSecret()) as unknown as JWTPayload;
+    const { payload } = await jwtVerify(token, getSecret());
+    return {
+      sub: payload.sub!,
+      email: payload.email as string,
+      rol: payload.rol as Rol,
+      iat: payload.iat!,
+      exp: payload.exp!,
+    };
   } catch {
     return null;
   }
 }
 
-export function verifyInternalToken(token: string): InternalJWTPayload | null {
+export async function verifyInternalToken(token: string): Promise<InternalJWTPayload | null> {
   try {
-    const decoded = jwt.verify(token, getSecret()) as unknown as InternalJWTPayload;
-    if (decoded.rol !== "INTERNAL") {
+    const { payload } = await jwtVerify(token, getSecret());
+    if (payload.rol !== "INTERNAL") {
       return null;
     }
-    return decoded;
+    return {
+      sub: payload.sub!,
+      rol: payload.rol as string,
+      iat: payload.iat!,
+      exp: payload.exp!,
+    };
   } catch {
     return null;
   }
 }
 
-export function generateInternalToken(): string {
-  const options: SignOptions = { expiresIn: "5m", algorithm: "HS256" };
-  return jwt.sign(
-    { sub: "internal", rol: "INTERNAL" },
-    getSecret(),
-    options
-  );
+export async function generateInternalToken(): Promise<string> {
+  return new SignJWT({ rol: "INTERNAL" })
+    .setProtectedHeader({ alg: "HS256" })
+    .setSubject("internal")
+    .setIssuedAt()
+    .setExpirationTime("5m")
+    .sign(getSecret());
 }
