@@ -1,0 +1,18 @@
+services:
+  mongodb:
+    image: mongo:8.0.3
+    container_name: biper-mongodb
+    restart: unless-stopped
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: biper
+      MONGO_INITDB_ROOT_PASSWORD: biper123
+      MONGO_INITDB_DATABASE: biper-cmv
+    command: --replSet rs0 --keyFile /etc/mongo-keyfile
+    volumes:
+      - mongo-data:/data/db
+      - ./mongo-keyfile:/etc/mongo-keyfile:ro
+
+volumes:
+  mongo-data:
