@@ -1,0 +1,108 @@
+// apps/web/prisma/schema.prisma
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Rol {
+  ADMIN
+  AGENT
+}
+
+enum NivelUrgencia {
+  BAJA
+  MEDIA
+  ALTA
+  CRITICA
+}
+
+enum EstadoEvento {
+  PENDIENTE
+  ASIGNADO
+  EN_RUTA
+  RESUELTO
+  CANCELADO
+}
+
+model User {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  email            String   @unique
+  password         String
+  nombre           String
+  rol              Rol
+  activo           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  eventosCreados   Evento[] @relation("Creador")
+  eventosAsignados Evento[] @relation("Asignado")
+  logs             LogAuditoria[]
+  historialEstado  EstadoHistorial[]
+}
+
+model Evento {
+  id               String        @id @default(auto()) @map("_id") @db.ObjectId
+  titulo           String
+  origen           String
+  nivelUrgencia    NivelUrgencia
+  direccionExacta  String
+  coordenadas      Json?
+  telefonoContacto String?
+  estado           EstadoEvento  @default(PENDIENTE)
+
+  creadorId        String        @db.ObjectId
+  creador          User          @relation("Creador", fields: [creadorId], references: [id])
+
+  asignadoId       String?       @db.ObjectId
+  asignado         User?         @relation("Asignado", fields: [asignadoId], references: [id])
+
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  assignedAt       DateTime?
+  resolvedAt       DateTime?
+
+  logs             LogAuditoria[] @relation("EventoLogs")
+  estadosHistorial EstadoHistorial[]
+
+  @@index([estado])
+  @@index([creadorId])
+  @@index([asignadoId])
+  @@index([nivelUrgencia])
+  @@index([createdAt])
+}
+
+model EstadoHistorial {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  eventoId  String   @db.ObjectId
+  evento    Evento   @relation(fields: [eventoId], references: [id])
+  estado    EstadoEvento
+  usuarioId String   @db.ObjectId
+  usuario   User     @relation(fields: [usuarioId], references: [id])
+  timestamp DateTime @default(now())
+  notas     String?
+}
+
+model LogAuditoria {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  accion      String
+  entidad     String
+  entidadId   String   @db.ObjectId
+  usuarioId   String   @db.ObjectId
+  usuario     User     @relation(fields: [usuarioId], references: [id])
+  detalle     Json?
+  timestamp   DateTime @default(now())
+
+  eventoId    String?  @db.ObjectId
+  evento      Evento?  @relation("EventoLogs", fields: [eventoId], references: [id])
+
+  @@index([entidad, entidadId])
+  @@index([usuarioId])
+  @@index([timestamp])
+  @@index([accion])
+  @@index([eventoId])
+}

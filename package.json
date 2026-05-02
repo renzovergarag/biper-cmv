@@ -1,0 +1,28 @@
+{
+  "name": "biper-cmv",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "services/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev -w apps/web",
+    "dev:socket": "npm run dev -w services/socket-server",
+    "dev": "concurrently \"npm run dev:web\" \"npm run dev:socket\"",
+    "build:web": "npm run build -w apps/web",
+    "build:socket": "npm run build -w services/socket-server",
+    "build": "npm run build:web && npm run build:socket",
+    "start:web": "npm run start -w apps/web",
+    "start:socket": "npm run start -w services/socket-server",
+    "db:generate": "npm run db:generate -w apps/web",
+    "db:push": "npm run db:push -w apps/web"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0",
+    "typescript": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
