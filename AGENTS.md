@@ -57,6 +57,12 @@ Se necesitan archivos `.env` en **tres ubicaciones**:
 - **bcrypt** es `external` en webpack de Next.js (`next.config.mjs`). No intentar bundle.
 - PM2: `ecosystem.config.js` levanta ambos servicios en producción.
 
+## UI / Front-end
+
+- **Usar shadcn/ui** para componentes de la interfaz en `apps/web`.
+- Los componentes se instalan en `src/components/ui/` vía `npx shadcn add <componente>`.
+- Tailwind CSS ya está configurado (`tailwind.config.ts`).
+
 ## Estilo de código
 
 - Indentación: 4 espacios.
