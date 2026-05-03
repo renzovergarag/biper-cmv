@@ -42,10 +42,37 @@ export interface LogAuditoria {
 }
 
 export interface SocketEventPayloads {
-  "evento:nuevo": { evento: Evento };
-  "evento:asignar": { eventoId: string };
-  "evento:actualizar-estado": { eventoId: string; nuevoEstado: EstadoEvento };
-  "evento:actualizado": { evento: Evento };
-  "evento:asignado-exito": { evento: Evento };
-  "evento:asignado-error": { mensaje: string };
+    "evento:nuevo": { evento: Evento };
+    "evento:asignar": { eventoId: string };
+    "evento:actualizar-estado": { eventoId: string; nuevoEstado: EstadoEvento };
+    "evento:actualizado": { evento: Evento };
+    "evento:asignado-exito": { evento: Evento };
+    "evento:asignado-error": { mensaje: string };
+}
+
+export interface AgenteConectado {
+    userId: string;
+    email: string;
+    nombre: string;
+    socketId: string;
+    connectedAt: string;
+}
+
+export interface LogSesion {
+    id: string;
+    accion: "LOGIN" | "LOGOUT";
+    usuarioId: string;
+    usuario: { nombre: string; email: string };
+    detalle: { ip: string; userAgent: string } | null;
+    timestamp: string;
+}
+
+export interface UserListItem {
+    id: string;
+    email: string;
+    nombre: string;
+    rol: Rol;
+    activo: boolean;
+    createdAt: string;
+    updatedAt: string;
 }
