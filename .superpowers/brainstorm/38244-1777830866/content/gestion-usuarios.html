@@ -1,0 +1,133 @@
+<h2>Gestión de Usuarios — Vista Admin</h2>
+<p class="subtitle">Módulo CRUD con pestañas: Lista de usuarios, crear/editar y logs de sesión</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">Vista principal (70% del ancho)</div>
+    <div class="mockup-body">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <h3 style="margin:0;font-size:16px">Gestión de Usuarios</h3>
+        <button class="mock-button">+ Nuevo Usuario</button>
+      </div>
+      <div style="display:flex;gap:8px;border-bottom:2px solid #e5e7eb;padding-bottom:12px;margin-bottom:16px">
+        <span style="padding:6px 12px;background:#3b82f6;color:white;border-radius:6px 6px 0 0;font-size:13px;font-weight:500">Usuarios</span>
+        <span style="padding:6px 12px;color:#6b7280;font-size:13px;cursor:pointer">Logs de Sesión</span>
+      </div>
+      <table style="width:100%;font-size:13px;border-collapse:collapse">
+        <tr style="border-bottom:1px solid #e5e7eb;color:#6b7280">
+          <td style="padding:8px 4px;font-weight:500">Nombre</td>
+          <td style="padding:8px 4px;font-weight:500">Email</td>
+          <td style="padding:8px 4px;font-weight:500">Rol</td>
+          <td style="padding:8px 4px;font-weight:500">Estado</td>
+          <td style="padding:8px 4px;font-weight:500"></td>
+        </tr>
+        <tr style="border-bottom:1px solid #f3f4f6">
+          <td style="padding:8px 4px;display:flex;align-items:center;gap:8px">
+            <span style="width:28px;height:28px;background:#3b82f6;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold">AP</span>
+            Admin Principal
+          </td>
+          <td style="padding:8px 4px;color:#6b7280">admin@biper.cl</td>
+          <td style="padding:8px 4px"><span style="background:#dbeafe;color:#1e40af;padding:2px 8px;border-radius:10px;font-size:11px">ADMIN</span></td>
+          <td style="padding:8px 4px"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:10px;font-size:11px">Activo</span></td>
+          <td style="padding:8px 4px;text-align:right">
+            <span style="color:#3b82f6;cursor:pointer;margin-right:8px">Editar</span>
+            <span style="color:#ef4444;cursor:pointer">Desactivar</span>
+          </td>
+        </tr>
+        <tr style="border-bottom:1px solid #f3f4f6">
+          <td style="padding:8px 4px;display:flex;align-items:center;gap:8px">
+            <span style="width:28px;height:28px;background:#10b981;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold">JP</span>
+            Juan Pérez
+          </td>
+          <td style="padding:8px 4px;color:#6b7280">agente1@biper.cl</td>
+          <td style="padding:8px 4px"><span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:10px;font-size:11px">AGENT</span></td>
+          <td style="padding:8px 4px"><span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:10px;font-size:11px">Activo</span></td>
+          <td style="padding:8px 4px;text-align:right">
+            <span style="color:#3b82f6;cursor:pointer;margin-right:8px">Editar</span>
+            <span style="color:#ef4444;cursor:pointer">Desactivar</span>
+          </td>
+        </tr>
+        <tr style="border-bottom:1px solid #f3f4f6">
+          <td style="padding:8px 4px;display:flex;align-items:center;gap:8px">
+            <span style="width:28px;height:28px;background:#f59e0b;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold">MG</span>
+            María González
+          </td>
+          <td style="padding:8px 4px;color:#6b7280">agente2@biper.cl</td>
+          <td style="padding:8px 4px"><span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:10px;font-size:11px">AGENT</span></td>
+          <td style="padding:8px 4px"><span style="background:#fef2f2;color:#991b1b;padding:2px 8px;border-radius:10px;font-size:11px">Inactivo</span></td>
+          <td style="padding:8px 4px;text-align:right">
+            <span style="color:#3b82f6;cursor:pointer;margin-right:8px">Editar</span>
+            <span style="color:#22c55e;cursor:pointer">Reactivar</span>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">Panel lateral (30% del ancho)</div>
+    <div class="mockup-body">
+      <h3 style="margin:0;font-size:14px;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+        <span style="display:inline-block;width:8px;height:8px;background:#22c55e;border-radius:50%;animation:pulse 1.5s infinite"></span>
+        Agentes Conectados
+      </h3>
+      <div style="border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="width:32px;height:32px;background:#10b981;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold">JP</span>
+          <div>
+            <div style="font-size:13px;font-weight:500">Juan Pérez</div>
+            <div style="font-size:11px;color:#6b7280">Conectado hace 5 min</div>
+          </div>
+          <span style="margin-left:auto;width:8px;height:8px;background:#22c55e;border-radius:50%"></span>
+        </div>
+      </div>
+      <div style="border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="width:32px;height:32px;background:#f59e0b;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold">MG</span>
+          <div>
+            <div style="font-size:13px;font-weight:500">María González</div>
+            <div style="font-size:11px;color:#6b7280">Conectado hace 12 min</div>
+          </div>
+          <span style="margin-left:auto;width:8px;height:8px;background:#22c55e;border-radius:50%"></span>
+        </div>
+      </div>
+      <div style="border:1px dashed #d1d5db;border-radius:8px;padding:16px;text-align:center">
+        <div style="font-size:13px;color:#9ca3af">Sin más agentes conectados</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Modal Crear / Editar Usuario</h3>
+</div>
+
+<div class="mockup">
+  <div class="mockup-header">Modal: Nuevo Usuario</div>
+  <div class="mockup-body">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div>
+        <div class="label">Nombre</div>
+        <input class="mock-input" placeholder="Nombre completo" style="width:100%;margin-top:4px">
+      </div>
+      <div>
+        <div class="label">Email</div>
+        <input class="mock-input" placeholder="correo@ejemplo.cl" style="width:100%;margin-top:4px">
+      </div>
+      <div>
+        <div class="label">Contraseña</div>
+        <input class="mock-input" placeholder="Mínimo 6 caracteres" style="width:100%;margin-top:4px">
+      </div>
+      <div>
+        <div class="label">Rol</div>
+        <select style="width:100%;margin-top:4px;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px">
+          <option>AGENT</option>
+          <option>ADMIN</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px">
+      <button class="mock-button" style="background:#f3f4f6;color:#374151">Cancelar</button>
+      <button class="mock-button">Crear Usuario</button>
+    </div>
+  </div>
+</div>
