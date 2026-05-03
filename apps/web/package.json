@@ -13,12 +13,18 @@
   "dependencies": {
     "@prisma/client": "^5.20.0",
     "bcrypt": "^5.1.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "jose": "^6.2.3",
     "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^1.14.0",
     "next": "^14.2.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
+    "shadcn": "^4.6.0",
     "socket.io-client": "^4.8.3",
+    "tailwind-merge": "^3.5.0",
+    "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.0"
   },
   "devDependencies": {
