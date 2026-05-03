@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/providers/AuthProvider";
-import { Geist } from "next/font/google";
-import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "BIPER CMV - Gestión de Eventos",
@@ -17,8 +16,8 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="es" className={cn("font-sans", geist.variable)}>
-            <body className="antialiased">
+        <html lang="es">
+            <body className={`${inter.className} antialiased`}>
                 <AuthProvider>
                     {children}
                 </AuthProvider>
