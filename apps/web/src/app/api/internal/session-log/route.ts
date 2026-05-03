@@ -21,24 +21,32 @@ export async function POST(request: NextRequest) {
         );
     }
 
-    const { usuarioId, accion, ip, userAgent } = await request.json();
+    try {
+        const { usuarioId, accion, ip, userAgent } = await request.json();
 
-    if (!usuarioId || !accion || !["LOGIN", "LOGOUT"].includes(accion)) {
+        if (!usuarioId || !accion || !["LOGIN", "LOGOUT"].includes(accion)) {
+            return NextResponse.json(
+                { error: "usuarioId y accion (LOGIN|LOGOUT) son requeridos" },
+                { status: 400 }
+            );
+        }
+
+        await prisma.logAuditoria.create({
+            data: {
+                accion,
+                entidad: "Sesion",
+                entidadId: usuarioId,
+                usuarioId,
+                detalle: { ip: ip || "unknown", userAgent: userAgent || "unknown" },
+            },
+        });
+
+        return NextResponse.json({ success: true }, { status: 201 });
+    } catch (error) {
+        console.error("Error en session-log:", error);
         return NextResponse.json(
-            { error: "usuarioId y accion (LOGIN|LOGOUT) son requeridos" },
-            { status: 400 }
+            { error: "Error interno del servidor" },
+            { status: 500 }
         );
     }
-
-    await prisma.logAuditoria.create({
-        data: {
-            accion,
-            entidad: "Sesion",
-            entidadId: usuarioId,
-            usuarioId,
-            detalle: { ip: ip || "unknown", userAgent: userAgent || "unknown" },
-        },
-    });
-
-    return NextResponse.json({ success: true }, { status: 201 });
 }
