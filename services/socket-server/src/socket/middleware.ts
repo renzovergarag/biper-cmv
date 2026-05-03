@@ -20,8 +20,8 @@ export function authenticateSocket(socket: Socket, next: (err?: Error) => void) 
     return next(new Error("Token inválido"));
   }
 
-  if (decoded.rol !== "AGENT") {
-    return next(new Error("Acceso denegado: solo agentes permitidos"));
+  if (decoded.rol !== "AGENT" && decoded.rol !== "ADMIN") {
+    return next(new Error("Acceso denegado: rol no autorizado"));
   }
 
   socket.user = decoded;

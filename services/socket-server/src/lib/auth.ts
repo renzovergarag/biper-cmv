@@ -9,6 +9,7 @@ if (!JWT_SECRET) {
 export interface SocketJWTPayload {
   sub: string;
   email: string;
+  nombre: string;
   rol: "ADMIN" | "AGENT" | "INTERNAL";
   iat: number;
   exp: number;
@@ -27,4 +28,11 @@ export function verifySocketToken(token: string): SocketJWTPayload | null {
   } catch {
     return null;
   }
+}
+
+export function generateInternalToken(): string {
+  return jwt.sign({ rol: "INTERNAL" }, getSecret(), {
+    subject: "internal",
+    expiresIn: "5m",
+  });
 }

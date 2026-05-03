@@ -11,6 +11,7 @@ if (!JWT_SECRET) {
 export interface JWTPayload {
   sub: string;
   email: string;
+  nombre: string;
   rol: Rol;
   iat: number;
   exp: number;
@@ -48,7 +49,7 @@ function parseDuration(duration: string): number {
 
 export async function generateToken(payload: Omit<JWTPayload, "iat" | "exp">): Promise<string> {
   const expiresIn = parseDuration(JWT_EXPIRES_IN);
-  return new SignJWT({ email: payload.email, rol: payload.rol })
+  return new SignJWT({ email: payload.email, nombre: payload.nombre, rol: payload.rol })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(payload.sub)
     .setIssuedAt()
@@ -62,6 +63,7 @@ export async function verifyToken(token: string): Promise<JWTPayload | null> {
     return {
       sub: payload.sub!,
       email: payload.email as string,
+      nombre: payload.nombre as string,
       rol: payload.rol as Rol,
       iat: payload.iat!,
       exp: payload.exp!,
