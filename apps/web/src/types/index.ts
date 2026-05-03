@@ -1,4 +1,8 @@
-import { Rol, NivelUrgencia, EstadoEvento } from "@prisma/client";
+import { Prisma, Rol, NivelUrgencia, EstadoEvento } from "@prisma/client";
+
+export type EventoWithRelations = Prisma.EventoGetPayload<{
+    include: { creador: true; asignado: true };
+}>;
 
 export interface User {
   id: string;
