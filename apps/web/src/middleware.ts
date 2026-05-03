@@ -25,6 +25,10 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL("/dashboard/admin", request.url));
     }
 
+    if (pathname.startsWith("/api/admin") && decoded.rol !== Rol.ADMIN) {
+        return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+    }
+
     const response = NextResponse.next();
     response.headers.set("X-User-Id", decoded.sub);
     response.headers.set("X-User-Rol", decoded.rol);
@@ -33,5 +37,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/(dashboard)/:path*"],
+    matcher: ["/(dashboard)/:path*", "/(api/admin)/:path*"],
 };
