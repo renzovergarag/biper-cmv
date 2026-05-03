@@ -3,6 +3,11 @@
 import { useState, useEffect } from "react";
 import { EventoWithRelations } from "@/types";
 import { useSocket } from "@/hooks/useSocket";
+import { NivelUrgencia, EstadoEvento } from "@prisma/client";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { urgenciaBadgeVariant, urgenciaLabel } from "@/lib/theme";
 
 interface Props {
     initialEventos: EventoWithRelations[];
@@ -69,7 +74,7 @@ export default function AgentDashboardClient({
     return (
         <div className="mx-auto max-w-md px-4 py-6">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-gray-900">
+                <h2 className="text-xl font-bold text-foreground">
                     Panel de Agente
                 </h2>
                 <div className="flex items-center gap-2">
@@ -77,157 +82,161 @@ export default function AgentDashboardClient({
                         className={`h-3 w-3 rounded-full ${
                             connected
                                 ? "bg-green-500 animate-pulse"
-                                : "bg-red-500"
+                                : "bg-destructive"
                         }`}
                     />
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-muted-foreground">
                         {connected ? "Conectado" : "Desconectado"}
                     </span>
                 </div>
             </div>
 
             <div className="mb-8">
-                <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
+                <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-3">
                     Disponibles
                 </h3>
                 {pendientes.length === 0 ? (
-                    <div className="bg-white rounded-lg shadow p-4">
-                        <p className="text-gray-500 text-sm">
-                            No hay eventos disponibles.
-                        </p>
-                    </div>
+                    <Card>
+                        <CardContent className="p-4">
+                            <p className="text-muted-foreground text-sm">
+                                No hay eventos disponibles.
+                            </p>
+                        </CardContent>
+                    </Card>
                 ) : (
                     <div className="space-y-3">
                         {pendientes.map((evento) => (
-                            <div
-                                key={evento.id}
-                                className="bg-white rounded-lg shadow p-4"
-                            >
-                                <div className="flex justify-between items-start mb-2">
-                                    <h4 className="font-semibold text-gray-900 text-sm">
-                                        {evento.titulo}
-                                    </h4>
-                                    <span
-                                        className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                                            evento.nivelUrgencia === "CRITICA"
-                                                ? "bg-red-100 text-red-800"
-                                                : evento.nivelUrgencia ===
-                                                  "ALTA"
-                                                ? "bg-orange-100 text-orange-800"
-                                                : evento.nivelUrgencia ===
-                                                  "MEDIA"
-                                                ? "bg-yellow-100 text-yellow-800"
-                                                : "bg-green-100 text-green-800"
-                                        }`}
+                            <Card key={evento.id}>
+                                <CardContent className="p-4">
+                                    <div className="flex justify-between items-start mb-2">
+                                        <h4 className="font-semibold text-foreground text-sm">
+                                            {evento.titulo}
+                                        </h4>
+                                        <Badge
+                                            variant={
+                                                urgenciaBadgeVariant[
+                                                    evento.nivelUrgencia as NivelUrgencia
+                                                ]
+                                            }
+                                        >
+                                            {urgenciaLabel[
+                                                evento.nivelUrgencia as NivelUrgencia
+                                            ] || evento.nivelUrgencia}
+                                        </Badge>
+                                    </div>
+                                    <p className="text-sm text-muted-foreground mb-3">
+                                        {evento.direccionExacta}
+                                    </p>
+                                    <Button
+                                        onClick={() =>
+                                            handleAsignar(evento.id)
+                                        }
+                                        className="w-full"
+                                        size="sm"
                                     >
-                                        {evento.nivelUrgencia}
-                                    </span>
-                                </div>
-                                <p className="text-sm text-gray-600 mb-1">
-                                    {evento.direccionExacta}
-                                </p>
-                                <button
-                                    onClick={() => handleAsignar(evento.id)}
-                                    className="w-full mt-2 bg-blue-600 text-white text-sm py-2 rounded-md hover:bg-blue-700"
-                                >
-                                    Tomar caso
-                                </button>
-                            </div>
+                                        Tomar caso
+                                    </Button>
+                                </CardContent>
+                            </Card>
                         ))}
                     </div>
                 )}
             </div>
 
             <div>
-                <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
+                <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-3">
                     Mis Eventos
                 </h3>
                 {eventos.length === 0 ? (
-                    <div className="bg-white rounded-lg shadow p-4">
-                        <p className="text-gray-500 text-sm">
-                            No tienes eventos asignados.
-                        </p>
-                    </div>
+                    <Card>
+                        <CardContent className="p-4">
+                            <p className="text-muted-foreground text-sm">
+                                No tienes eventos asignados.
+                            </p>
+                        </CardContent>
+                    </Card>
                 ) : (
                     <div className="space-y-3">
                         {eventos.map((evento) => (
-                            <div
-                                key={evento.id}
-                                className="bg-white rounded-lg shadow p-4"
-                            >
-                                <div className="flex justify-between items-start mb-2">
-                                    <h4 className="font-semibold text-gray-900 text-sm">
-                                        {evento.titulo}
-                                    </h4>
-                                    <span
-                                        className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                                            evento.nivelUrgencia === "CRITICA"
-                                                ? "bg-red-100 text-red-800"
-                                                : evento.nivelUrgencia ===
-                                                  "ALTA"
-                                                ? "bg-orange-100 text-orange-800"
-                                                : evento.nivelUrgencia ===
-                                                  "MEDIA"
-                                                ? "bg-yellow-100 text-yellow-800"
-                                                : "bg-green-100 text-green-800"
-                                        }`}
-                                    >
-                                        {evento.nivelUrgencia}
-                                    </span>
-                                </div>
-                                <p className="text-sm text-gray-600 mb-1">
-                                    {evento.direccionExacta}
-                                </p>
-                                <p className="text-xs text-gray-500 mb-3">
-                                    Estado:{" "}
-                                    <span className="font-medium">
-                                        {evento.estado}
-                                    </span>
-                                </p>
-
-                                {evento.estado === "ASIGNADO" &&
-                                    evento.asignadoId === userId && (
-                                        <button
-                                            onClick={() =>
-                                                handleCambiarEstado(
-                                                    evento.id,
-                                                    "EN_RUTA"
-                                                )
+                            <Card key={evento.id}>
+                                <CardContent className="p-4">
+                                    <div className="flex justify-between items-start mb-2">
+                                        <h4 className="font-semibold text-foreground text-sm">
+                                            {evento.titulo}
+                                        </h4>
+                                        <Badge
+                                            variant={
+                                                urgenciaBadgeVariant[
+                                                    evento.nivelUrgencia as NivelUrgencia
+                                                ]
                                             }
-                                            className="w-full bg-yellow-600 text-white text-sm py-2 rounded-md hover:bg-yellow-700"
                                         >
-                                            Marcar En Ruta
-                                        </button>
-                                    )}
+                                            {urgenciaLabel[
+                                                evento.nivelUrgencia as NivelUrgencia
+                                            ] || evento.nivelUrgencia}
+                                        </Badge>
+                                    </div>
+                                    <p className="text-sm text-muted-foreground mb-1">
+                                        {evento.direccionExacta}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground mb-3">
+                                        Estado:{" "}
+                                        <span className="font-medium text-foreground">
+                                            {evento.estado}
+                                        </span>
+                                    </p>
 
-                                {evento.estado === "EN_RUTA" &&
-                                    evento.asignadoId === userId && (
-                                        <div className="grid grid-cols-2 gap-2">
-                                            <button
+                                    {evento.estado ===
+                                        EstadoEvento.ASIGNADO &&
+                                        evento.asignadoId === userId && (
+                                            <Button
                                                 onClick={() =>
                                                     handleCambiarEstado(
                                                         evento.id,
-                                                        "RESUELTO"
+                                                        EstadoEvento.EN_RUTA
                                                     )
                                                 }
-                                                className="bg-green-600 text-white text-sm py-2 rounded-md hover:bg-green-700"
+                                                variant="default"
+                                                className="w-full bg-yellow-600 hover:bg-yellow-700"
+                                                size="sm"
                                             >
-                                                Resolver
-                                            </button>
-                                            <button
-                                                onClick={() =>
-                                                    handleCambiarEstado(
-                                                        evento.id,
-                                                        "CANCELADO"
-                                                    )
-                                                }
-                                                className="bg-red-600 text-white text-sm py-2 rounded-md hover:bg-red-700"
-                                            >
-                                                Cancelar
-                                            </button>
-                                        </div>
-                                    )}
-                            </div>
+                                                Marcar En Ruta
+                                            </Button>
+                                        )}
+
+                                    {evento.estado ===
+                                        EstadoEvento.EN_RUTA &&
+                                        evento.asignadoId === userId && (
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <Button
+                                                    onClick={() =>
+                                                        handleCambiarEstado(
+                                                            evento.id,
+                                                            EstadoEvento.RESUELTO
+                                                        )
+                                                    }
+                                                    className="w-full bg-green-600 hover:bg-green-700"
+                                                    size="sm"
+                                                >
+                                                    Resolver
+                                                </Button>
+                                                <Button
+                                                    onClick={() =>
+                                                        handleCambiarEstado(
+                                                            evento.id,
+                                                            EstadoEvento.CANCELADO
+                                                        )
+                                                    }
+                                                    variant="destructive"
+                                                    size="sm"
+                                                    className="w-full"
+                                                >
+                                                    Cancelar
+                                                </Button>
+                                            </div>
+                                        )}
+                                </CardContent>
+                            </Card>
                         ))}
                     </div>
                 )}
