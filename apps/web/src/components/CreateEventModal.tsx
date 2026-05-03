@@ -2,6 +2,21 @@
 
 import { useState } from "react";
 import { NivelUrgencia } from "@prisma/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { Plus } from "lucide-react";
+import { urgenciaLabel } from "@/lib/theme";
 
 interface CreateEventModalProps {
     onEventCreated: (evento: any) => void;
@@ -10,7 +25,7 @@ interface CreateEventModalProps {
 export default function CreateEventModal({
     onEventCreated,
 }: CreateEventModalProps) {
-    const [isOpen, setIsOpen] = useState(false);
+    const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [form, setForm] = useState({
@@ -36,20 +51,25 @@ export default function CreateEventModal({
         setError(null);
     }
 
-    function handleOpen() {
-        setIsOpen(true);
-    }
-
-    function handleClose() {
-        setIsOpen(false);
-        resetForm();
+    function handleOpenChange(isOpen: boolean) {
+        setOpen(isOpen);
+        if (!isOpen) {
+            resetForm();
+        }
     }
 
     function handleChange(
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+        e: React.ChangeEvent<HTMLInputElement>
     ) {
         const { name, value } = e.target;
         setForm((prev) => ({ ...prev, [name]: value }));
+    }
+
+    function handleUrgenciaChange(value: string) {
+        setForm((prev) => ({
+            ...prev,
+            nivelUrgencia: value as NivelUrgencia,
+        }));
     }
 
     async function handleSubmit(e: React.FormEvent) {
@@ -91,7 +111,8 @@ export default function CreateEventModal({
             }
 
             onEventCreated(data.evento);
-            handleClose();
+            setOpen(false);
+            resetForm();
         } catch {
             setError("Error de red. Inténtalo de nuevo.");
         } finally {
@@ -100,209 +121,137 @@ export default function CreateEventModal({
     }
 
     return (
-        <>
-            <button
-                onClick={handleOpen}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-            >
-                + Crear Evento
-            </button>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
+            <DialogTrigger asChild>
+                <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Crear Evento
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-lg">
+                <DialogHeader>
+                    <DialogTitle>Crear nuevo evento</DialogTitle>
+                    <DialogDescription>
+                        Completa los datos del evento para registrarlo en el
+                        sistema.
+                    </DialogDescription>
+                </DialogHeader>
 
-            {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 p-6">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-semibold text-gray-900">
-                                Crear nuevo evento
-                            </h3>
-                            <button
-                                onClick={handleClose}
-                                className="text-gray-400 hover:text-gray-500"
-                            >
-                                <span className="sr-only">Cerrar</span>
-                                <svg
-                                    className="h-6 w-6"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    {error && (
+                        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md text-sm">
+                            {error}
                         </div>
+                    )}
 
-                        {error && (
-                            <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">
-                                {error}
-                            </div>
-                        )}
-
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div>
-                                <label
-                                    htmlFor="titulo"
-                                    className="block text-sm font-medium text-gray-700"
-                                >
-                                    Título
-                                </label>
-                                <input
-                                    type="text"
-                                    id="titulo"
-                                    name="titulo"
-                                    value={form.titulo}
-                                    onChange={handleChange}
-                                    required
-                                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                />
-                            </div>
-
-                            <div>
-                                <label
-                                    htmlFor="origen"
-                                    className="block text-sm font-medium text-gray-700"
-                                >
-                                    Origen
-                                </label>
-                                <input
-                                    type="text"
-                                    id="origen"
-                                    name="origen"
-                                    value={form.origen}
-                                    onChange={handleChange}
-                                    required
-                                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                />
-                            </div>
-
-                            <div>
-                                <label
-                                    htmlFor="nivelUrgencia"
-                                    className="block text-sm font-medium text-gray-700"
-                                >
-                                    Nivel de Urgencia
-                                </label>
-                                <select
-                                    id="nivelUrgencia"
-                                    name="nivelUrgencia"
-                                    value={form.nivelUrgencia}
-                                    onChange={handleChange}
-                                    required
-                                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                >
-                                    <option value={NivelUrgencia.BAJA}>
-                                        Baja
-                                    </option>
-                                    <option value={NivelUrgencia.MEDIA}>
-                                        Media
-                                    </option>
-                                    <option value={NivelUrgencia.ALTA}>
-                                        Alta
-                                    </option>
-                                    <option value={NivelUrgencia.CRITICA}>
-                                        Crítica
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label
-                                    htmlFor="direccionExacta"
-                                    className="block text-sm font-medium text-gray-700"
-                                >
-                                    Dirección Exacta
-                                </label>
-                                <input
-                                    type="text"
-                                    id="direccionExacta"
-                                    name="direccionExacta"
-                                    value={form.direccionExacta}
-                                    onChange={handleChange}
-                                    required
-                                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                />
-                            </div>
-
-                            <div>
-                                <label
-                                    htmlFor="telefonoContacto"
-                                    className="block text-sm font-medium text-gray-700"
-                                >
-                                    Teléfono de Contacto
-                                </label>
-                                <input
-                                    type="tel"
-                                    id="telefonoContacto"
-                                    name="telefonoContacto"
-                                    value={form.telefonoContacto}
-                                    onChange={handleChange}
-                                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label
-                                        htmlFor="latitud"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Latitud
-                                    </label>
-                                    <input
-                                        type="number"
-                                        step="any"
-                                        id="latitud"
-                                        name="latitud"
-                                        value={form.latitud}
-                                        onChange={handleChange}
-                                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                    />
-                                </div>
-                                <div>
-                                    <label
-                                        htmlFor="longitud"
-                                        className="block text-sm font-medium text-gray-700"
-                                    >
-                                        Longitud
-                                    </label>
-                                    <input
-                                        type="number"
-                                        step="any"
-                                        id="longitud"
-                                        name="longitud"
-                                        value={form.longitud}
-                                        onChange={handleChange}
-                                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="flex justify-end gap-3 pt-2">
-                                <button
-                                    type="button"
-                                    onClick={handleClose}
-                                    className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={loading}
-                                    className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {loading
-                                        ? "Creando..."
-                                        : "Crear Evento"}
-                                </button>
-                            </div>
-                        </form>
+                    <div className="space-y-2">
+                        <Label htmlFor="titulo">Título</Label>
+                        <Input
+                            id="titulo"
+                            name="titulo"
+                            value={form.titulo}
+                            onChange={handleChange}
+                            required
+                        />
                     </div>
-                </div>
-            )}
-        </>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="origen">Origen</Label>
+                        <Input
+                            id="origen"
+                            name="origen"
+                            value={form.origen}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="nivelUrgencia">
+                            Nivel de Urgencia
+                        </Label>
+                        <Select
+                            value={form.nivelUrgencia}
+                            onValueChange={handleUrgenciaChange}
+                        >
+                            <SelectTrigger id="nivelUrgencia">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {Object.values(NivelUrgencia).map((nivel) => (
+                                    <SelectItem key={nivel} value={nivel}>
+                                        {urgenciaLabel[nivel]}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="direccionExacta">
+                            Dirección Exacta
+                        </Label>
+                        <Input
+                            id="direccionExacta"
+                            name="direccionExacta"
+                            value={form.direccionExacta}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="telefonoContacto">
+                            Teléfono de Contacto
+                        </Label>
+                        <Input
+                            id="telefonoContacto"
+                            name="telefonoContacto"
+                            type="tel"
+                            value={form.telefonoContacto}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="latitud">Latitud</Label>
+                            <Input
+                                id="latitud"
+                                name="latitud"
+                                type="number"
+                                step="any"
+                                value={form.latitud}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="longitud">Longitud</Label>
+                            <Input
+                                id="longitud"
+                                name="longitud"
+                                type="number"
+                                step="any"
+                                value={form.longitud}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </div>
+
+                    <DialogFooter>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setOpen(false)}
+                        >
+                            Cancelar
+                        </Button>
+                        <Button type="submit" disabled={loading}>
+                            {loading ? "Creando..." : "Crear Evento"}
+                        </Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
     );
 }
