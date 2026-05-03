@@ -28,7 +28,15 @@ export default function CreateEventModal({
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [form, setForm] = useState({
+    const [form, setForm] = useState<{
+        titulo: string;
+        origen: string;
+        nivelUrgencia: NivelUrgencia;
+        direccionExacta: string;
+        telefonoContacto: string;
+        latitud: string;
+        longitud: string;
+    }>({
         titulo: "",
         origen: "",
         nivelUrgencia: NivelUrgencia.BAJA,
