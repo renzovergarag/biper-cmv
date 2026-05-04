@@ -1,6 +1,19 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
 import type { LogSesion, UserListItem } from "@/types";
 
 interface SessionLogsTabProps {
@@ -51,110 +64,107 @@ export default function SessionLogsTab({ usuarios }: SessionLogsTabProps) {
     return (
         <div>
             <div className="mb-4 flex flex-wrap gap-3 items-end">
-                <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">
-                        Agente
-                    </label>
-                    <select
-                        value={usuarioId}
-                        onChange={(e) => setUsuarioId(e.target.value)}
-                        className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    >
-                        <option value="">Todos</option>
-                        {usuarios
-                            .filter((u) => u.rol === "AGENT")
-                            .map((u) => (
-                                <option key={u.id} value={u.id}>
-                                    {u.nombre}
-                                </option>
-                            ))}
-                    </select>
+                <div className="space-y-1">
+                    <Label className="text-xs">Agente</Label>
+                    <Select value={usuarioId} onValueChange={setUsuarioId}>
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Todos" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="todos">Todos</SelectItem>
+                            {usuarios
+                                .filter((u) => u.rol === "AGENT")
+                                .map((u) => (
+                                    <SelectItem key={u.id} value={u.id}>
+                                        {u.nombre}
+                                    </SelectItem>
+                                ))}
+                        </SelectContent>
+                    </Select>
                 </div>
-                <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">
-                        Desde
-                    </label>
-                    <input
+                <div className="space-y-1">
+                    <Label className="text-xs">Desde</Label>
+                    <Input
                         type="date"
                         value={fechaDesde}
                         onChange={(e) => setFechaDesde(e.target.value)}
-                        className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        className="w-[160px]"
                     />
                 </div>
-                <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">
-                        Hasta
-                    </label>
-                    <input
+                <div className="space-y-1">
+                    <Label className="text-xs">Hasta</Label>
+                    <Input
                         type="date"
                         value={fechaHasta}
                         onChange={(e) => setFechaHasta(e.target.value)}
-                        className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        className="w-[160px]"
                     />
                 </div>
-                <button
-                    onClick={fetchLogs}
-                    className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
-                >
+                <Button onClick={fetchLogs} size="sm">
                     Filtrar
-                </button>
+                </Button>
             </div>
 
             {loading ? (
-                <p className="text-sm text-gray-400 py-4">Cargando...</p>
+                <p className="text-sm text-muted-foreground py-4">Cargando...</p>
             ) : logs.length === 0 ? (
-                <p className="text-sm text-gray-400 py-4">
+                <p className="text-sm text-muted-foreground py-4">
                     No hay registros de sesión
                 </p>
             ) : (
-                <div className="overflow-x-auto">
-                    <table className="min-w-full text-sm">
-                        <thead>
-                            <tr className="border-b border-gray-200 text-left text-xs font-medium text-gray-500 uppercase">
-                                <th className="px-4 py-2">Usuario</th>
-                                <th className="px-4 py-2">Acción</th>
-                                <th className="px-4 py-2">Fecha</th>
-                                <th className="px-4 py-2">IP</th>
-                                <th className="px-4 py-2">Navegador</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
+                <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Usuario</TableHead>
+                                <TableHead>Acción</TableHead>
+                                <TableHead>Fecha</TableHead>
+                                <TableHead>IP</TableHead>
+                                <TableHead>Navegador</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
                             {logs.map((log) => (
-                                <tr key={log.id} className="hover:bg-gray-50">
-                                    <td className="px-4 py-2">
-                                        <div className="font-medium text-gray-900">
+                                <TableRow key={log.id}>
+                                    <TableCell>
+                                        <div className="font-medium text-foreground">
                                             {log.usuario?.nombre || "—"}
                                         </div>
-                                        <div className="text-xs text-gray-400">
+                                        <div className="text-xs text-muted-foreground">
                                             {log.usuario?.email || "—"}
                                         </div>
-                                    </td>
-                                    <td className="px-4 py-2">
-                                        <span
-                                            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                                    </TableCell>
+                                    <TableCell>
+                                        <Badge
+                                            variant={
                                                 log.accion === "LOGIN"
-                                                    ? "bg-green-100 text-green-700"
-                                                    : "bg-red-100 text-red-700"
-                                            }`}
+                                                    ? "default"
+                                                    : "destructive"
+                                            }
+                                            className={
+                                                log.accion === "LOGIN"
+                                                    ? "bg-green-100 text-green-700 hover:bg-green-100"
+                                                    : ""
+                                            }
                                         >
                                             {log.accion}
-                                        </span>
-                                    </td>
-                                    <td className="px-4 py-2 text-gray-500">
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-muted-foreground">
                                         {formatearFecha(log.timestamp)}
-                                    </td>
-                                    <td className="px-4 py-2 text-gray-500 font-mono text-xs">
+                                    </TableCell>
+                                    <TableCell className="text-muted-foreground font-mono text-xs">
                                         {(log.detalle as Record<string, string>)?.ip ||
                                             "—"}
-                                    </td>
-                                    <td className="px-4 py-2 text-gray-400 text-xs max-w-[150px] truncate">
+                                    </TableCell>
+                                    <TableCell className="text-muted-foreground text-xs max-w-[150px] truncate">
                                         {(log.detalle as Record<string, string>)
                                             ?.userAgent || "—"}
-                                    </td>
-                                </tr>
+                                    </TableCell>
+                                </TableRow>
                             ))}
-                        </tbody>
-                    </table>
+                        </TableBody>
+                    </Table>
                 </div>
             )}
         </div>
