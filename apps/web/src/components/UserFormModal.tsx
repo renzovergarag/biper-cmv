@@ -1,6 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 import type { UserListItem } from "@/types";
 import type { Rol } from "@prisma/client";
 
@@ -40,8 +52,6 @@ export default function UserFormModal({
         }
         setError("");
     }, [usuario, isOpen]);
-
-    if (!isOpen) return null;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -83,108 +93,94 @@ export default function UserFormModal({
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-            <div
-                className="fixed inset-0 bg-black bg-opacity-50"
-                onClick={onClose}
-            />
-            <div className="relative bg-white rounded-lg shadow-xl w-full max-w-md mx-4 p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                    {isEditing ? "Editar Usuario" : "Nuevo Usuario"}
-                </h2>
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle>
+                        {isEditing ? "Editar Usuario" : "Nuevo Usuario"}
+                    </DialogTitle>
+                    <DialogDescription>
+                        {isEditing
+                            ? "Modifica los datos del usuario"
+                            : "Crea un nuevo usuario en el sistema"}
+                    </DialogDescription>
+                </DialogHeader>
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className="space-y-4">
                     {error && (
-                        <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">
+                        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md text-sm">
                             {error}
                         </div>
                     )}
 
-                    <div className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Nombre
-                            </label>
-                            <input
-                                type="text"
-                                value={nombre}
-                                onChange={(e) => setNombre(e.target.value)}
-                                required
-                                className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Email
-                            </label>
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                                className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Contraseña{" "}
-                                {isEditing && (
-                                    <span className="font-normal text-gray-400">
-                                        (dejar vacío para mantener)
-                                    </span>
-                                )}
-                            </label>
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required={!isEditing}
-                                minLength={6}
-                                className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Rol
-                            </label>
-                            <select
-                                value={rol}
-                                onChange={(e) =>
-                                    setRol(e.target.value as Rol)
-                                }
-                                className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                            >
-                                <option value="AGENT">AGENT</option>
-                                <option value="ADMIN">ADMIN</option>
-                            </select>
-                        </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="nombre">Nombre</Label>
+                        <Input
+                            id="nombre"
+                            type="text"
+                            value={nombre}
+                            onChange={(e) => setNombre(e.target.value)}
+                            required
+                        />
                     </div>
 
-                    <div className="mt-6 flex justify-end gap-3">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                        >
+                    <div className="space-y-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="password">
+                            Contraseña
+                            {isEditing && (
+                                <span className="font-normal text-muted-foreground ml-1">
+                                    (dejar vacío para mantener)
+                                </span>
+                            )}
+                        </Label>
+                        <Input
+                            id="password"
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required={!isEditing}
+                            minLength={6}
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="rol">Rol</Label>
+                        <Select value={rol} onValueChange={(v) => setRol(v as Rol)}>
+                            <SelectTrigger id="rol">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="AGENT">Agente</SelectItem>
+                                <SelectItem value="ADMIN">Admin</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <DialogFooter>
+                        <Button type="button" variant="outline" onClick={onClose}>
                             Cancelar
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={saving}
-                            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50"
-                        >
+                        </Button>
+                        <Button type="submit" disabled={saving}>
                             {saving
                                 ? "Guardando..."
                                 : isEditing
                                   ? "Guardar Cambios"
                                   : "Crear Usuario"}
-                        </button>
-                    </div>
+                        </Button>
+                    </DialogFooter>
                 </form>
-            </div>
-        </div>
+            </DialogContent>
+        </Dialog>
     );
 }
