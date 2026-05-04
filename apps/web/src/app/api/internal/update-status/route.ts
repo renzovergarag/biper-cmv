@@ -64,7 +64,7 @@ export async function PATCH(request: NextRequest) {
       updateData.resolvedAt = new Date();
     }
 
-    const [, , updatedEvento] = await prisma.$transaction([
+    const [, , , updatedEvento] = await prisma.$transaction([
       prisma.evento.updateMany({
         where: { id: eventoId },
         data: updateData,
