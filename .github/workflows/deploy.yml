@@ -1,0 +1,58 @@
+name: Deploy to VPS
+
+on:
+    push:
+        branches: ["main"]
+
+jobs:
+    deploy-vps:
+        runs-on: self-hosted
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Crear archivos de entorno
+              run: |
+                  # Root .env
+                  cat > .env << 'EOF'
+                  DATABASE_URL="${{ secrets.DATABASE_URL }}"
+                  JWT_SECRET="${{ secrets.JWT_SECRET }}"
+                  JWT_EXPIRES_IN="${{ secrets.JWT_EXPIRES_IN }}"
+                  NEXT_PUBLIC_APP_URL="https://viper.cmvalparaiso.cl"
+                  SOCKET_SERVER_URL="https://viper.cmvalparaiso.cl"
+                  SOCKET_SERVER_INTERNAL_URL="http://localhost:4000"
+                  EOF
+
+                  # Web .env
+                  cat > apps/web/.env << 'EOF'
+                  DATABASE_URL="${{ secrets.DATABASE_URL }}"
+                  JWT_SECRET="${{ secrets.JWT_SECRET }}"
+                  JWT_EXPIRES_IN="${{ secrets.JWT_EXPIRES_IN }}"
+                  NEXT_PUBLIC_APP_URL="https://viper.cmvalparaiso.cl"
+                  SOCKET_SERVER_URL="https://viper.cmvalparaiso.cl"
+                  EOF
+
+                  # Socket .env
+                  cat > services/socket-server/.env << 'EOF'
+                  PORT=4000
+                  DATABASE_URL="${{ secrets.DATABASE_URL }}"
+                  JWT_SECRET="${{ secrets.JWT_SECRET }}"
+                  NEXT_API_URL="http://localhost:3001"
+                  EOF
+
+            - name: Use Node.js 22.x
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22.x
+                  cache: "npm"
+
+            - name: Instalacion de dependencias
+              run: npm install
+
+            - name: Generacion de Prisma Client
+              run: npm run db:generate
+
+            - name: Construccion del proyecto
+              run: npm run build
+
+            - name: Reinicio de PM2
+              run: pm2 startOrRestart ecosystem.config.js
