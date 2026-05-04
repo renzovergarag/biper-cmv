@@ -24,7 +24,10 @@ export async function GET(
             include: {
                 creador: true,
                 asignado: true,
-                estadosHistorial: true,
+                estadosHistorial: {
+                    include: { usuario: true },
+                    orderBy: { timestamp: "desc" },
+                },
             },
         });
 

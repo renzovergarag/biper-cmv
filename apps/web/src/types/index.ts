@@ -4,6 +4,16 @@ export type EventoWithRelations = Prisma.EventoGetPayload<{
     include: { creador: true; asignado: true };
 }>;
 
+export type EventoWithHistorial = Prisma.EventoGetPayload<{
+    include: {
+        creador: true;
+        asignado: true;
+        estadosHistorial: {
+            include: { usuario: true };
+        };
+    };
+}>;
+
 export interface User {
   id: string;
   email: string;
