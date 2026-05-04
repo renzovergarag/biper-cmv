@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { EstadoEvento, NivelUrgencia } from "@prisma/client";
+import { EventoWithHistorial } from "@/types";
 import {
     Dialog,
     DialogContent,
@@ -30,18 +31,17 @@ export default function EventDetailModal({
     onOpenChange,
     refreshVersion,
 }: EventDetailModalProps) {
-    const [evento, setEvento] = useState<any>(null);
+    const [evento, setEvento] = useState<EventoWithHistorial | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const abortRef = useRef<AbortController | null>(null);
 
     useEffect(() => {
         if (!open || !eventoId) return;
 
         const controller = new AbortController();
-        abortRef.current = controller;
 
         setLoading(true);
+        setEvento(null);
         setError(null);
 
         fetch(`/api/events/${eventoId}`, { signal: controller.signal })
