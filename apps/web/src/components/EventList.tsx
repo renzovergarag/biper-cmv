@@ -19,6 +19,7 @@ import {
 
 interface EventListProps {
     eventos: EventoWithRelations[];
+    onEventClick?: (eventoId: string) => void;
 }
 
 function formatDate(date: Date | string): string {
@@ -32,7 +33,7 @@ function formatDate(date: Date | string): string {
     });
 }
 
-export default function EventList({ eventos }: EventListProps) {
+export default function EventList({ eventos, onEventClick }: EventListProps) {
     if (eventos.length === 0) {
         return (
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-8 text-center">
@@ -58,7 +59,15 @@ export default function EventList({ eventos }: EventListProps) {
                 </TableHeader>
                 <TableBody>
                     {eventos.map((evento) => (
-                        <TableRow key={evento.id}>
+                        <TableRow
+                            key={evento.id}
+                            className={
+                                onEventClick
+                                    ? "cursor-pointer hover:bg-muted/50"
+                                    : ""
+                            }
+                            onClick={() => onEventClick?.(evento.id)}
+                        >
                             <TableCell className="font-medium">
                                 {evento.titulo}
                             </TableCell>
