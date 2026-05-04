@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { urgenciaBadgeVariant, urgenciaLabel } from "@/lib/theme";
+import EventNotification from "@/components/EventNotification";
 
 interface Props {
     initialEventos: EventoWithRelations[];
@@ -44,12 +45,17 @@ export default function AgentDashboardClient({
         }: {
             evento: EventoWithRelations;
         }) => {
-            setEventos((prev) =>
-                prev.map((e) => (e.id === evento.id ? evento : e))
-            );
-            setPendientes((prev) =>
-                prev.filter((e) => e.id !== evento.id)
-            );
+            setEventos((prev) => {
+                const existe = prev.some((e) => e.id === evento.id);
+                if (existe) {
+                    return prev.map((e) => (e.id === evento.id ? evento : e));
+                }
+                if (evento.asignadoId === userId) {
+                    return [evento, ...prev];
+                }
+                return prev;
+            });
+            setPendientes((prev) => prev.filter((e) => e.id !== evento.id));
         };
 
         socket.on("evento:nuevo", handleNuevo);
@@ -241,6 +247,7 @@ export default function AgentDashboardClient({
                     </div>
                 )}
             </div>
+            <EventNotification socket={socket} />
         </div>
     );
 }
