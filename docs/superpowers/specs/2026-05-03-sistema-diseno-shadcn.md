@@ -8,7 +8,7 @@
 
 ## 1. Objetivo
 
-Establecer shadcn/ui como sistema de diseño único de BIPER CMV. Reemplazar componentes custom actuales (HTML + Tailwind utilitario directo) por componentes shadcn con una paleta Slate + Blue sobria y elegante, tipografía Inter, y jerarquía de color de texto consistente para máxima legibilidad.
+Establecer shadcn/ui como sistema de diseño único de VIPER CMV. Reemplazar componentes custom actuales (HTML + Tailwind utilitario directo) por componentes shadcn con una paleta Slate + Blue sobria y elegante, tipografía Inter, y jerarquía de color de texto consistente para máxima legibilidad.
 
 ## 2. Tema — Tokens CSS
 

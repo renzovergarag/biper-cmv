@@ -8,7 +8,7 @@
 
 ## Objetivo
 
-Dos mejoras al módulo de eventos de biper-cmv:
+Dos mejoras al módulo de eventos de viper-cmv:
 
 1. **Refresco en tiempo real para admin**: que la tabla de eventos del dashboard de admin refleje automáticamente los cambios que hacen los agentes (asignar, cambiar estado).
 2. **Modal de detalle con timeline**: al hacer clic en una fila de la tabla del admin, abrir un modal que muestre el historial de estados del evento al estilo seguimiento de paquetes.

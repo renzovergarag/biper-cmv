@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Migrar BIPER CMV a shadcn/ui con paleta Slate+Blue, tipografía Inter, y jerarquía de color de texto consistente.
+**Goal:** Migrar VIPER CMV a shadcn/ui con paleta Slate+Blue, tipografía Inter, y jerarquía de color de texto consistente.
 
 **Architecture:** Inicializar shadcn/ui sobre el proyecto Next.js existente, reemplazar `globals.css` con los tokens CSS de la paleta Slate+Blue, instalar 10 componentes shadcn via CLI, crear un archivo central de tokens de urgencia en `lib/theme.ts`, y migrar progresivamente cada componente custom a shadcn.
 
@@ -186,7 +186,7 @@ import { AuthProvider } from "@/components/providers/AuthProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "BIPER CMV - Gestión de Eventos",
+    title: "VIPER CMV - Gestión de Eventos",
     description: "Sistema de despacho y gestión de eventos territoriales",
 };
 
@@ -382,7 +382,7 @@ export default function LoginPage() {
             <div className="max-w-md w-full space-y-8">
                 <div className="text-center">
                     <h1 className="text-4xl font-bold text-foreground">
-                        BIPER CMV
+                        VIPER CMV
                     </h1>
                     <p className="mt-2 text-muted-foreground">
                         Sistema de Gestión de Eventos Territoriales
@@ -412,7 +412,7 @@ export default function LoginPage() {
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="admin@biper.cl"
+                                    placeholder="admin@viper.cl"
                                 />
                             </div>
 
@@ -487,7 +487,7 @@ export default function Navigation() {
         <header className="border-b bg-background">
             <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
                 <h1 className="text-xl font-semibold text-foreground">
-                    BIPER CMV
+                    VIPER CMV
                 </h1>
                 {user && (
                     <div className="flex items-center gap-4">
@@ -1284,7 +1284,7 @@ export default function Home() {
         <div className="min-h-screen flex items-center justify-center bg-secondary/50">
             <div className="text-center">
                 <h1 className="text-4xl font-bold text-foreground mb-4">
-                    BIPER CMV
+                    VIPER CMV
                 </h1>
                 <p className="text-lg text-muted-foreground">
                     Sistema de Gestión de Eventos Territoriales

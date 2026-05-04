@@ -6,7 +6,7 @@ export default function Home() {
         <div className="min-h-screen flex items-center justify-center bg-secondary/50">
             <div className="text-center">
                 <h1 className="text-4xl font-bold text-foreground mb-4">
-                    BIPER CMV
+                    VIPER CMV
                 </h1>
                 <p className="text-lg text-muted-foreground">
                     Sistema de Gestión de Eventos Territoriales

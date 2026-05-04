@@ -26,7 +26,7 @@ async function main() {
 
   const admin = await prisma.user.create({
     data: {
-      email: "admin@biper.cl",
+      email: "admin@viper.cl",
       password: hashedPassword,
       nombre: "Admin Principal",
       rol: Rol.ADMIN,
@@ -36,7 +36,7 @@ async function main() {
 
   const agente1 = await prisma.user.create({
     data: {
-      email: "agente1@biper.cl",
+      email: "agente1@viper.cl",
       password: hashedPassword,
       nombre: "Juan Pérez",
       rol: Rol.AGENT,
@@ -46,7 +46,7 @@ async function main() {
 
   const agente2 = await prisma.user.create({
     data: {
-      email: "agente2@biper.cl",
+      email: "agente2@viper.cl",
       password: hashedPassword,
       nombre: "María González",
       rol: Rol.AGENT,
@@ -195,9 +195,9 @@ async function main() {
   console.log("   Historial de estados: 9 registros");
   console.log("   Logs de auditoría: 5 registros");
   console.log("\n🔐 Credenciales de prueba:");
-  console.log("   Admin: admin@biper.cl / password123");
-  console.log("   Agente 1: agente1@biper.cl / password123");
-  console.log("   Agente 2: agente2@biper.cl / password123");
+  console.log("   Admin: admin@viper.cl / password123");
+  console.log("   Agente 1: agente1@viper.cl / password123");
+  console.log("   Agente 2: agente2@viper.cl / password123");
   console.log("\n✅ Seed completado!");
 }
 

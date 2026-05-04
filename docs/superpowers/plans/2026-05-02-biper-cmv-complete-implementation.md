@@ -1,4 +1,4 @@
-# BIPER-CMV Funcionalidades Pendientes — Implementation Plan
+# VIPER-CMV Funcionalidades Pendientes — Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -496,7 +496,7 @@ import "./globals.css";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 
 export const metadata: Metadata = {
-    title: "BIPER CMV - Gestión de Eventos",
+    title: "VIPER CMV - Gestión de Eventos",
     description: "Sistema de despacho y gestión de eventos territoriales",
 };
 
@@ -594,7 +594,7 @@ export function Navigation() {
         <nav className="bg-white shadow">
             <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
                 <h1 className="text-xl font-semibold text-gray-900">
-                    BIPER CMV
+                    VIPER CMV
                 </h1>
                 {user && (
                     <div className="flex items-center gap-4">

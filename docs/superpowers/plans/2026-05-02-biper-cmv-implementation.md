@@ -1,4 +1,4 @@
-# BIPER-CMV Implementation Plan
+# VIPER-CMV Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -13,7 +13,7 @@
 ## File Structure
 
 ```
-biper-cmv/
+viper-cmv/
 ├── package.json                              # Workspace root
 ├── tsconfig.json                             # Root TypeScript config
 ├── .env.example                              # Variables de entorno ejemplo
@@ -512,7 +512,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "BIPER CMV - Gestión de Eventos",
+    title: "VIPER CMV - Gestión de Eventos",
   description: "Sistema de despacho y gestión de eventos territoriales",
 };
 
@@ -540,7 +540,7 @@ export default function Home() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="text-center">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          BIPER CMV
+          VIPER CMV
         </h1>
         <p className="text-lg text-gray-600">
           Sistema de Gestión de Eventos Territoriales
@@ -1376,7 +1376,7 @@ export default function DashboardLayout({
       <header className="bg-white shadow">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <h1 className="text-xl font-semibold text-gray-900">
-            BIPER CMV
+            VIPER CMV
           </h1>
         </div>
       </header>

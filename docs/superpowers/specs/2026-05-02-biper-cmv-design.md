@@ -1,7 +1,7 @@
 # SPEC: Sistema de Despacho y Gestión de Eventos Territoriales en Tiempo Real
 
 **Fecha:** 2026-05-02
-**Proyecto:** biper-cmv
+**Proyecto:** viper-cmv
 
 ---
 
@@ -10,7 +10,7 @@
 ### 1.1 Monorepo Structure
 
 ```
-biper-cmv/
+viper-cmv/
 ├── apps/
 │   └── web/                        # Next.js 14+ (App Router)
 │       ├── src/

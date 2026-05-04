@@ -21,7 +21,7 @@ export default function Navigation() {
             <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
                 <div className="flex items-center gap-6">
                     <h1 className="text-xl font-semibold text-foreground">
-                        BIPER CMV
+                        VIPER CMV
                     </h1>
                     {user && (
                         <nav className="flex gap-4">

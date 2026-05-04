@@ -1,4 +1,4 @@
-# Informe de Funcionalidades Pendientes — BIPER CMV
+# Informe de Funcionalidades Pendientes — VIPER CMV
 
 > Fecha: 2026-05-02
 > Basado en comparación del plan de implementación vs. código base actual.

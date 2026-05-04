@@ -1,4 +1,4 @@
-# AGENTS.md — biper-cmv
+# AGENTS.md — viper-cmv
 
 Monorepo con npm workspaces (`apps/*`, `services/*`). Stack: Next.js 14 + Socket.io + MongoDB/Prisma.
 
