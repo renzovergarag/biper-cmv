@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { io, Socket } from "socket.io-client";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { AgenteConectado } from "@/types";
 
 export default function ConnectedAgentsPanel() {
@@ -48,21 +49,22 @@ export default function ConnectedAgentsPanel() {
 
     return (
         <aside className="w-72 flex-shrink-0">
-            <div className="sticky top-6">
-                <div className="bg-white rounded-lg shadow p-4">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <Card className="sticky top-6">
+                <CardHeader className="pb-3">
+                    <CardTitle className="text-sm flex items-center gap-2">
                         <span className="relative flex h-2 w-2">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
                         </span>
                         Agentes Conectados
-                        <span className="ml-auto text-xs font-normal text-gray-400">
+                        <span className="ml-auto text-xs font-normal text-muted-foreground">
                             {agentes.length}
                         </span>
-                    </h3>
-
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
                     {agentes.length === 0 ? (
-                        <p className="text-sm text-gray-400 text-center py-4">
+                        <p className="text-sm text-muted-foreground text-center py-4">
                             Sin agentes conectados
                         </p>
                     ) : (
@@ -70,9 +72,9 @@ export default function ConnectedAgentsPanel() {
                             {agentes.map((agente) => (
                                 <li
                                     key={agente.userId}
-                                    className="flex items-center gap-3 p-2 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors"
+                                    className="flex items-center gap-3 p-2 rounded-lg border hover:bg-accent transition-colors"
                                 >
-                                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 text-xs font-bold">
+                                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary text-xs font-bold">
                                         {agente.nombre
                                             .split(" ")
                                             .map((n: string) => n[0])
@@ -81,10 +83,10 @@ export default function ConnectedAgentsPanel() {
                                             .slice(0, 2)}
                                     </span>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-gray-900 truncate">
+                                        <p className="text-sm font-medium text-foreground truncate">
                                             {agente.nombre}
                                         </p>
-                                        <p className="text-xs text-gray-400">
+                                        <p className="text-xs text-muted-foreground">
                                             {agente.email}
                                         </p>
                                     </div>
@@ -93,8 +95,8 @@ export default function ConnectedAgentsPanel() {
                             ))}
                         </ul>
                     )}
-                </div>
-            </div>
+                </CardContent>
+            </Card>
         </aside>
     );
 }
