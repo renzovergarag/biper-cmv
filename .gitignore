@@ -8,3 +8,4 @@ dist/
 coverage/
 *.tsbuildinfo
 mongo-keyfile
+.superpowers/
