@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { verifySocketToken } from "../lib/auth";
+import { verifySocketToken } from "../lib/auth.js";
 
 const router = Router();
 

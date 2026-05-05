@@ -1,8 +1,8 @@
 import "dotenv/config";
 import express from "express";
 import { createServer } from "http";
-import { setupSocketIO } from "./socket";
-import internalRoutes from "./routes/internal";
+import { setupSocketIO } from "./socket.js";
+import internalRoutes from "./routes/internal.js";
 
 const app = express();
 const PORT = process.env.PORT || 4000;

@@ -1,7 +1,8 @@
 {
   "name": "@biper-cmv/socket-server",
   "version": "1.0.0",
-  "private": true,
+    "type": "module",
+    "private": true,
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",

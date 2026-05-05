@@ -1,7 +1,7 @@
 import { Server } from "socket.io";
 import { Server as HttpServer } from "http";
-import { authenticateSocket } from "./middleware";
-import { registerSocketHandlers } from "./handlers";
+import { authenticateSocket } from "./middleware.js";
+import { registerSocketHandlers } from "./handlers.js";
 
 export function setupSocketIO(httpServer: HttpServer) {
   const io = new Server(httpServer, {
