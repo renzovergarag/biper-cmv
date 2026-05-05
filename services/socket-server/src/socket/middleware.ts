@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { verifySocketToken, SocketJWTPayload } from "../lib/auth";
+import { verifySocketToken, SocketJWTPayload } from "../lib/auth.js";
 
 declare module "socket.io" {
   interface Socket {

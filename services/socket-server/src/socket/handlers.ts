@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { asignarEventoAtomico, actualizarEstadoEvento } from "../lib/api-client";
+import { asignarEventoAtomico, actualizarEstadoEvento } from "../lib/api-client.js";
 
 const ESTADOS_VALIDOS = ["EN_RUTA", "RESUELTO", "CANCELADO"] as const;
 
