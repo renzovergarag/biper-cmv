@@ -139,94 +139,178 @@ export default function UsersPageClient() {
             </div>
 
             {activeTab === "usuarios" ? (
-                <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Usuario</TableHead>
-                                <TableHead>Email</TableHead>
-                                <TableHead>Rol</TableHead>
-                                <TableHead>Estado</TableHead>
-                                <TableHead className="text-right">
-                                    Acciones
-                                </TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {usuarios.map((usuario) => (
-                                <TableRow key={usuario.id}>
-                                    <TableCell>
-                                        <div className="flex items-center gap-3">
-                                            <Avatar className="h-8 w-8">
-                                                <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
-                                                    {getInitials(usuario.nombre)}
-                                                </AvatarFallback>
-                                            </Avatar>
-                                            <span className="text-sm font-medium text-foreground">
-                                                {usuario.nombre}
-                                            </span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="text-muted-foreground">
-                                        {usuario.email}
-                                    </TableCell>
-                                    <TableCell>
-                                        <Badge
-                                            variant={
-                                                usuario.rol === "ADMIN"
-                                                    ? "default"
-                                                    : "secondary"
-                                            }
-                                        >
-                                            {usuario.rol}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Badge
-                                            variant={
-                                                usuario.activo
-                                                    ? "outline"
-                                                    : "destructive"
-                                            }
-                                        >
-                                            {usuario.activo
-                                                ? "Activo"
-                                                : "Inactivo"}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <Button
-                                            variant="link"
-                                            size="sm"
-                                            onClick={() =>
-                                                handleEdit(usuario)
-                                            }
-                                            className="mr-2"
-                                        >
-                                            Editar
-                                        </Button>
-                                        <Button
-                                            variant="link"
-                                            size="sm"
-                                            onClick={() =>
-                                                handleToggleActivo(usuario)
-                                            }
-                                            className={
-                                                usuario.activo
-                                                    ? "text-destructive"
-                                                    : "text-green-600"
-                                            }
-                                        >
-                                            {usuario.activo
-                                                ? "Desactivar"
-                                                : "Reactivar"}
-                                        </Button>
-                                    </TableCell>
+                <>
+                    {/* --- Desktop: tabla (≥1024px) --- */}
+                    <div className="hidden lg:block rounded-lg border bg-card text-card-foreground shadow-sm">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Usuario</TableHead>
+                                    <TableHead>Email</TableHead>
+                                    <TableHead>Rol</TableHead>
+                                    <TableHead>Estado</TableHead>
+                                    <TableHead className="text-right">
+                                        Acciones
+                                    </TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </div>
+                            </TableHeader>
+                            <TableBody>
+                                {usuarios.map((usuario) => (
+                                    <TableRow key={usuario.id}>
+                                        <TableCell>
+                                            <div className="flex items-center gap-3">
+                                                <Avatar className="h-8 w-8">
+                                                    <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+                                                        {getInitials(usuario.nombre)}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                                <span className="text-sm font-medium text-foreground">
+                                                    {usuario.nombre}
+                                                </span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="text-muted-foreground">
+                                            {usuario.email}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge
+                                                variant={
+                                                    usuario.rol === "ADMIN"
+                                                        ? "default"
+                                                        : "secondary"
+                                                }
+                                            >
+                                                {usuario.rol}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Badge
+                                                variant={
+                                                    usuario.activo
+                                                        ? "outline"
+                                                        : "destructive"
+                                                }
+                                            >
+                                                {usuario.activo
+                                                    ? "Activo"
+                                                    : "Inactivo"}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <Button
+                                                variant="link"
+                                                size="sm"
+                                                onClick={() =>
+                                                    handleEdit(usuario)
+                                                }
+                                                className="mr-2"
+                                            >
+                                                Editar
+                                            </Button>
+                                            <Button
+                                                variant="link"
+                                                size="sm"
+                                                onClick={() =>
+                                                    handleToggleActivo(usuario)
+                                                }
+                                                className={
+                                                    usuario.activo
+                                                        ? "text-destructive"
+                                                        : "text-green-600"
+                                                }
+                                            >
+                                                {usuario.activo
+                                                    ? "Desactivar"
+                                                    : "Reactivar"}
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+
+                    {/* --- Mobile/Tablet: cards (<1024px) --- */}
+                    <div className="lg:hidden space-y-3">
+                        {usuarios.map((usuario) => (
+                            <div
+                                key={usuario.id}
+                                className="rounded-lg border bg-card text-card-foreground shadow-sm p-4 space-y-3"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <Avatar className="h-10 w-10">
+                                        <AvatarFallback className="bg-primary/10 text-primary text-sm font-bold">
+                                            {getInitials(usuario.nombre)}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                        <p className="text-sm font-medium text-foreground">
+                                            {usuario.nombre}
+                                        </p>
+                                        <p className="text-xs text-muted-foreground">
+                                            {usuario.email}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-xs text-muted-foreground">
+                                        Rol
+                                    </span>
+                                    <Badge
+                                        variant={
+                                            usuario.rol === "ADMIN"
+                                                ? "default"
+                                                : "secondary"
+                                        }
+                                    >
+                                        {usuario.rol}
+                                    </Badge>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-xs text-muted-foreground">
+                                        Estado
+                                    </span>
+                                    <Badge
+                                        variant={
+                                            usuario.activo
+                                                ? "outline"
+                                                : "destructive"
+                                        }
+                                    >
+                                        {usuario.activo
+                                            ? "Activo"
+                                            : "Inactivo"}
+                                    </Badge>
+                                </div>
+                                <div className="flex justify-end gap-2 pt-1 border-t">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => handleEdit(usuario)}
+                                    >
+                                        Editar
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() =>
+                                            handleToggleActivo(usuario)
+                                        }
+                                        className={
+                                            usuario.activo
+                                                ? "text-destructive border-destructive hover:bg-destructive/10"
+                                                : "text-green-600 border-green-600 hover:bg-green-50"
+                                        }
+                                    >
+                                        {usuario.activo
+                                            ? "Desactivar"
+                                            : "Reactivar"}
+                                    </Button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </>
             ) : (
                 <SessionLogsTab usuarios={usuarios} />
             )}
