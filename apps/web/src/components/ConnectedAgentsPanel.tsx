@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     Sheet,
     SheetContent,
+    SheetDescription,
     SheetHeader,
     SheetTitle,
     SheetTrigger,
@@ -179,6 +180,9 @@ export default function ConnectedAgentsPanel() {
                                     {agentes.length}
                                 </span>
                             </SheetTitle>
+                            <SheetDescription className="sr-only">
+                                Lista de agentes actualmente conectados al sistema
+                            </SheetDescription>
                         </SheetHeader>
                         <AgentList agentes={agentes} />
                     </SheetContent>
