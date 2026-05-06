@@ -17,8 +17,8 @@ jobs:
                   DATABASE_URL="${{ secrets.DATABASE_URL }}"
                   JWT_SECRET="${{ secrets.JWT_SECRET }}"
                   JWT_EXPIRES_IN="${{ secrets.JWT_EXPIRES_IN }}"
-                  NEXT_PUBLIC_APP_URL="https://viper.cmvalparaiso.cl"
-                  SOCKET_SERVER_URL="https://viper.cmvalparaiso.cl"
+                  NEXT_PUBLIC_APP_URL="${{ secrets.NEXT_PUBLIC_APP_URL }}"
+                  SOCKET_SERVER_URL="${{ secrets.SOCKET_SERVER_URL }}"
                   SOCKET_SERVER_INTERNAL_URL="http://localhost:4000"
                   EOF
 
@@ -27,8 +27,10 @@ jobs:
                   DATABASE_URL="${{ secrets.DATABASE_URL }}"
                   JWT_SECRET="${{ secrets.JWT_SECRET }}"
                   JWT_EXPIRES_IN="${{ secrets.JWT_EXPIRES_IN }}"
-                  NEXT_PUBLIC_APP_URL="https://viper.cmvalparaiso.cl"
-                  SOCKET_SERVER_URL="https://viper.cmvalparaiso.cl"
+                  NEXT_PUBLIC_APP_URL="${{ secrets.NEXT_PUBLIC_APP_URL }}"
+                  SOCKET_SERVER_URL="${{ secrets.SOCKET_SERVER_URL }}"
+                  NEXT_PUBLIC_SOCKET_URL="${{ secrets.NEXT_PUBLIC_SOCKET_URL }}"
+                  SOCKET_SERVER_INTERNAL_URL="http://localhost:4000"
                   EOF
 
                   # Socket .env
@@ -37,6 +39,7 @@ jobs:
                   DATABASE_URL="${{ secrets.DATABASE_URL }}"
                   JWT_SECRET="${{ secrets.JWT_SECRET }}"
                   NEXT_API_URL="http://localhost:3001"
+                  NEXT_PUBLIC_APP_URL="${{ secrets.NEXT_PUBLIC_APP_URL }}"
                   EOF
 
             - name: Use Node.js 22.x

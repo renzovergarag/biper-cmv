@@ -34,7 +34,11 @@ async function registrarSesion(
             body: JSON.stringify({ usuarioId, accion, ip, userAgent }),
         });
     } catch (error) {
-        console.error("Error al registrar sesión:", error);
+        console.error(
+            `Error al registrar sesión (${accion}) para usuario ${usuarioId}:`,
+            error instanceof Error ? error.message : error,
+            `| URL: ${process.env.NEXT_API_URL || "http://localhost:3000"}/api/internal/session-log`
+        );
     }
 }
 

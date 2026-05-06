@@ -55,6 +55,24 @@ export async function POST(request: NextRequest) {
       rol: user.rol,
     });
 
+    const ip =
+        request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+        "unknown";
+    const userAgent =
+        request.headers.get("user-agent") || "unknown";
+
+    prisma.logAuditoria.create({
+        data: {
+            accion: "LOGIN",
+            entidad: "Sesion",
+            entidadId: user.id,
+            usuarioId: user.id,
+            detalle: { ip, userAgent },
+        },
+    }).catch((err) => {
+        console.error("Error al registrar sesión (web login):", err);
+    });
+
     const response = NextResponse.json({
       user: {
         id: user.id,
