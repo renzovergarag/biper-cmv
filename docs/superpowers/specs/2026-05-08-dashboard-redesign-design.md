@@ -369,7 +369,7 @@ No hay framework de tests en el repo (AGENTS.md). QA visual manual estructurado:
 |---|---|
 | `shadcn add` inserta tokens v4/OKLCH y rompe theme actual | Convertir a HSL antes de commitear; smoke test en Fase 1 |
 | `recharts` agrega bundle pesado | Aceptable; si crece, lazy-load del chart con `dynamic` |
-| Mover `admin/page.tsx` rompe links | Página vieja redirige a `/admin/events` durante una fase de transición |
+| `/dashboard/admin` cambia de contenido (era lista, ahora es home) | La URL no cambia, solo el contenido. Quien tenía `/dashboard/admin` en favoritos verá la home; la lista vive ahora en `/dashboard/admin/events` (URL nueva). Cambio de comportamiento esperado, comunicado en el PR |
 | Socket-server caído rompe KPI agentes online | Endpoint maneja error y devuelve `count: 0` con `x-stale` |
 | `AuthProvider` cambia de contrato | No se toca; el shell solo lee `useAuth()` |
 
