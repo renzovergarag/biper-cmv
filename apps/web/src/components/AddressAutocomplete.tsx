@@ -59,6 +59,7 @@ export function AddressAutocomplete({
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const detailsAbortRef = useRef<AbortController | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const justSelectedRef = useRef(false);
 
@@ -69,6 +70,15 @@ export function AddressAutocomplete({
     }
     document.addEventListener("mousedown", onDocClick);
     return () => document.removeEventListener("mousedown", onDocClick);
+  }, []);
+
+  // Cancelar todo en unmount
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      abortRef.current?.abort();
+      detailsAbortRef.current?.abort();
+    };
   }, []);
 
   // Fetch al cambiar value
@@ -120,6 +130,7 @@ export function AddressAutocomplete({
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
+      abortRef.current?.abort();
     };
   }, [value, sessionToken]);
 
@@ -128,9 +139,15 @@ export function AddressAutocomplete({
     onChange(s.description);
     setOpen(false);
     setSuggestions([]);
+
+    detailsAbortRef.current?.abort();
+    const ctrl = new AbortController();
+    detailsAbortRef.current = ctrl;
+
     try {
       const res = await fetch(
-        `/api/places/details?placeId=${encodeURIComponent(s.placeId)}&sessionToken=${sessionToken}`
+        `/api/places/details?placeId=${encodeURIComponent(s.placeId)}&sessionToken=${sessionToken}`,
+        { signal: ctrl.signal }
       );
       if (!res.ok) return;
       const data = (await res.json()) as SelectedPlace & { description: string };
@@ -142,11 +159,16 @@ export function AddressAutocomplete({
         comuna: data.comuna,
       });
     } catch {
-      // silencioso — fallback a texto libre
+      // silencioso — fallback a texto libre (incluye AbortError)
     }
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Escape" && open) {
+      e.preventDefault();
+      setOpen(false);
+      return;
+    }
     if (!open || suggestions.length === 0) return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -157,8 +179,6 @@ export function AddressAutocomplete({
     } else if (e.key === "Enter") {
       e.preventDefault();
       handleSelect(suggestions[highlight]);
-    } else if (e.key === "Escape") {
-      setOpen(false);
     }
   }
 
