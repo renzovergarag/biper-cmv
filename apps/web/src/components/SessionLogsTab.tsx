@@ -31,9 +31,21 @@ export default function SessionLogsTab({ usuarios }: SessionLogsTabProps) {
         setLoading(true);
         try {
             const params = new URLSearchParams();
-            if (usuarioId) params.set("usuarioId", usuarioId);
-            if (fechaDesde) params.set("fechaDesde", new Date(fechaDesde).toISOString());
-            if (fechaHasta) params.set("fechaHasta", new Date(fechaHasta + "T23:59:59").toISOString());
+            if (usuarioId && usuarioId !== "todos") {
+                params.set("usuarioId", usuarioId);
+            }
+            if (fechaDesde) {
+                params.set(
+                    "fechaDesde",
+                    new Date(fechaDesde + "T00:00:00").toISOString()
+                );
+            }
+            if (fechaHasta) {
+                params.set(
+                    "fechaHasta",
+                    new Date(fechaHasta + "T23:59:59.999").toISOString()
+                );
+            }
             params.set("limit", "100");
 
             const res = await fetch(`/api/admin/sessions?${params}`);
@@ -65,20 +77,21 @@ export default function SessionLogsTab({ usuarios }: SessionLogsTabProps) {
         <div>
             <div className="mb-4 flex flex-wrap gap-3 items-end">
                 <div className="space-y-1">
-                    <Label className="text-xs">Agente</Label>
+                    <Label className="text-xs">Usuario</Label>
                     <Select value={usuarioId} onValueChange={setUsuarioId}>
-                        <SelectTrigger className="w-[180px]">
+                        <SelectTrigger className="w-[200px]">
                             <SelectValue placeholder="Todos" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="todos">Todos</SelectItem>
-                            {usuarios
-                                .filter((u) => u.rol === "AGENT")
-                                .map((u) => (
-                                    <SelectItem key={u.id} value={u.id}>
-                                        {u.nombre}
-                                    </SelectItem>
-                                ))}
+                            {usuarios.map((u) => (
+                                <SelectItem key={u.id} value={u.id}>
+                                    {u.nombre}{" "}
+                                    <span className="text-muted-foreground text-xs">
+                                        ({u.rol})
+                                    </span>
+                                </SelectItem>
+                            ))}
                         </SelectContent>
                     </Select>
                 </div>
