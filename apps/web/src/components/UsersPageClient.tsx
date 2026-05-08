@@ -103,14 +103,15 @@ export default function UsersPageClient() {
 
     return (
         <div>
-            <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-foreground">
-                    Gestión de Usuarios
-                </h2>
-                <Button onClick={handleCreate}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nuevo Usuario
-                </Button>
+            <div className="sticky top-14 z-20 -mx-4 lg:-mx-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+                <div className="px-4 lg:px-6 py-3 flex items-center justify-between gap-3">
+                    <h2 className="text-xl font-bold truncate">Usuarios</h2>
+                    <Button onClick={handleCreate}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Nuevo
+                        <span className="hidden sm:inline">&nbsp;Usuario</span>
+                    </Button>
+                </div>
             </div>
 
             <div className="mb-6 border-b">
