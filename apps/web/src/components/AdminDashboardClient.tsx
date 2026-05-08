@@ -72,7 +72,7 @@ export default function AdminDashboardClient({
 
     return (
         <div>
-            <div className="sticky top-14 z-20 -mx-4 lg:-mx-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+            <div className="sticky top-14 z-20 -mx-4 lg:-mx-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                 <div className="px-4 lg:px-6 py-3 flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
                         <h2 className="text-xl font-bold truncate">Eventos</h2>
