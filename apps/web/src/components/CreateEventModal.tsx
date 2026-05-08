@@ -10,11 +10,19 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import {
+    Drawer,
+    DrawerContent,
+    DrawerDescription,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
+} from "@/components/ui/drawer";
 import { Plus } from "lucide-react";
 import { urgenciaLabel } from "@/lib/theme";
 
@@ -128,137 +136,125 @@ export default function CreateEventModal({
         }
     }
 
+    const isMobile = useMediaQuery("(max-width: 639px)");
+
+    const triggerButton = (
+        <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Crear Evento
+        </Button>
+    );
+
+    function FormBody() {
+        return (
+            <form onSubmit={handleSubmit} className="space-y-4">
+                {error && (
+                    <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md text-sm">
+                        {error}
+                    </div>
+                )}
+
+                <div className="space-y-2">
+                    <Label htmlFor="titulo">Título</Label>
+                    <Input id="titulo" name="titulo" value={form.titulo} onChange={handleChange} required />
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="origen">Origen</Label>
+                    <Input id="origen" name="origen" value={form.origen} onChange={handleChange} required />
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="nivelUrgencia">Nivel de Urgencia</Label>
+                    <Select value={form.nivelUrgencia} onValueChange={handleUrgenciaChange}>
+                        <SelectTrigger id="nivelUrgencia">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Object.values(NivelUrgencia).map((nivel) => (
+                                <SelectItem key={nivel} value={nivel}>
+                                    {urgenciaLabel[nivel]}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="direccionExacta">Dirección Exacta</Label>
+                    <Input
+                        id="direccionExacta"
+                        name="direccionExacta"
+                        value={form.direccionExacta}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="telefonoContacto">Teléfono de Contacto</Label>
+                    <Input
+                        id="telefonoContacto"
+                        name="telefonoContacto"
+                        type="tel"
+                        value={form.telefonoContacto}
+                        onChange={handleChange}
+                    />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="latitud">Latitud</Label>
+                        <Input id="latitud" name="latitud" type="number" step="any" value={form.latitud} onChange={handleChange} />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="longitud">Longitud</Label>
+                        <Input id="longitud" name="longitud" type="number" step="any" value={form.longitud} onChange={handleChange} />
+                    </div>
+                </div>
+
+                <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
+                    <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                        Cancelar
+                    </Button>
+                    <Button type="submit" disabled={loading}>
+                        {loading ? "Creando..." : "Crear Evento"}
+                    </Button>
+                </div>
+            </form>
+        );
+    }
+
+    if (isMobile) {
+        return (
+            <Drawer open={open} onOpenChange={handleOpenChange}>
+                <DrawerTrigger asChild>{triggerButton}</DrawerTrigger>
+                <DrawerContent>
+                    <DrawerHeader className="text-left">
+                        <DrawerTitle>Crear nuevo evento</DrawerTitle>
+                        <DrawerDescription>
+                            Completa los datos del evento para registrarlo en el sistema.
+                        </DrawerDescription>
+                    </DrawerHeader>
+                    <div className="px-4 pb-6 max-h-[70vh] overflow-y-auto">
+                        <FormBody />
+                    </div>
+                </DrawerContent>
+            </Drawer>
+        );
+    }
+
     return (
         <Dialog open={open} onOpenChange={handleOpenChange}>
-            <DialogTrigger asChild>
-                <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Crear Evento
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-lg">
+            <DialogTrigger asChild>{triggerButton}</DialogTrigger>
+            <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Crear nuevo evento</DialogTitle>
                     <DialogDescription>
-                        Completa los datos del evento para registrarlo en el
-                        sistema.
+                        Completa los datos del evento para registrarlo en el sistema.
                     </DialogDescription>
                 </DialogHeader>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    {error && (
-                        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md text-sm">
-                            {error}
-                        </div>
-                    )}
-
-                    <div className="space-y-2">
-                        <Label htmlFor="titulo">Título</Label>
-                        <Input
-                            id="titulo"
-                            name="titulo"
-                            value={form.titulo}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="origen">Origen</Label>
-                        <Input
-                            id="origen"
-                            name="origen"
-                            value={form.origen}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="nivelUrgencia">
-                            Nivel de Urgencia
-                        </Label>
-                        <Select
-                            value={form.nivelUrgencia}
-                            onValueChange={handleUrgenciaChange}
-                        >
-                            <SelectTrigger id="nivelUrgencia">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {Object.values(NivelUrgencia).map((nivel) => (
-                                    <SelectItem key={nivel} value={nivel}>
-                                        {urgenciaLabel[nivel]}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="direccionExacta">
-                            Dirección Exacta
-                        </Label>
-                        <Input
-                            id="direccionExacta"
-                            name="direccionExacta"
-                            value={form.direccionExacta}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="telefonoContacto">
-                            Teléfono de Contacto
-                        </Label>
-                        <Input
-                            id="telefonoContacto"
-                            name="telefonoContacto"
-                            type="tel"
-                            value={form.telefonoContacto}
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="latitud">Latitud</Label>
-                            <Input
-                                id="latitud"
-                                name="latitud"
-                                type="number"
-                                step="any"
-                                value={form.latitud}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="longitud">Longitud</Label>
-                            <Input
-                                id="longitud"
-                                name="longitud"
-                                type="number"
-                                step="any"
-                                value={form.longitud}
-                                onChange={handleChange}
-                            />
-                        </div>
-                    </div>
-
-                    <DialogFooter>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => setOpen(false)}
-                        >
-                            Cancelar
-                        </Button>
-                        <Button type="submit" disabled={loading}>
-                            {loading ? "Creando..." : "Crear Evento"}
-                        </Button>
-                    </DialogFooter>
-                </form>
+                <FormBody />
             </DialogContent>
         </Dialog>
     );
