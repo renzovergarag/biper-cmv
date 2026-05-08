@@ -185,10 +185,8 @@ export default function CreateEventModal({
                             setCoordsFromAutocomplete(true);
                         }}
                         onClearCoords={() => {
-                            if (form.direccionExacta.trim().length === 0) {
-                                setCoordenadas(null);
-                                setCoordsFromAutocomplete(false);
-                            }
+                            setCoordenadas(null);
+                            setCoordsFromAutocomplete(false);
                         }}
                         required
                     />

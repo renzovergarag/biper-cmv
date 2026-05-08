@@ -189,8 +189,9 @@ export function AddressAutocomplete({
           id={id ?? inputId}
           value={value}
           onChange={(e) => {
-            onChange(e.target.value);
-            if (onClearCoords) onClearCoords();
+            const next = e.target.value;
+            onChange(next);
+            if (onClearCoords && next.trim().length === 0) onClearCoords();
           }}
           onKeyDown={onKeyDown}
           onFocus={() => suggestions.length > 0 && setOpen(true)}

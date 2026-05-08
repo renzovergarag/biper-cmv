@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { urgenciaBadgeVariant, urgenciaLabel } from "@/lib/theme";
 import EventNotification from "@/components/EventNotification";
+import { AddressLink } from "./AddressLink";
 
 interface Props {
     initialEventos: EventoWithRelations[];
@@ -131,7 +132,10 @@ export default function AgentDashboardClient({
                                         </Badge>
                                     </div>
                                     <p className="text-sm text-muted-foreground mb-3">
-                                        {evento.direccionExacta}
+                                        <AddressLink
+                                            direccion={evento.direccionExacta}
+                                            coordenadas={evento.coordenadas as { lat: number; lng: number } | null | undefined}
+                                        />
                                     </p>
                                     <Button
                                         onClick={() =>
@@ -182,7 +186,10 @@ export default function AgentDashboardClient({
                                         </Badge>
                                     </div>
                                     <p className="text-sm text-muted-foreground mb-1">
-                                        {evento.direccionExacta}
+                                        <AddressLink
+                                            direccion={evento.direccionExacta}
+                                            coordenadas={evento.coordenadas as { lat: number; lng: number } | null | undefined}
+                                        />
                                     </p>
                                     <p className="text-xs text-muted-foreground mb-3">
                                         Estado:{" "}
