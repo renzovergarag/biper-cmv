@@ -17,6 +17,7 @@ import {
     estadoLabel,
 } from "@/lib/theme";
 import EventTimeline from "./EventTimeline";
+import { AddressLink } from "./AddressLink";
 
 interface EventDetailModalProps {
     eventoId: string | null;
@@ -135,9 +136,10 @@ export default function EventDetailModal({
                                 </div>
                             </div>
                             <div className="flex gap-5 text-sm text-muted-foreground">
-                                <span>
-                                    {evento.direccionExacta}
-                                </span>
+                                <AddressLink
+                                    direccion={evento.direccionExacta}
+                                    coordenadas={evento.coordenadas as { lat: number; lng: number } | null | undefined}
+                                />
                                 {evento.telefonoContacto && (
                                     <span>{evento.telefonoContacto}</span>
                                 )}
