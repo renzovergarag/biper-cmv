@@ -5,6 +5,7 @@ import { NivelUrgencia } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AddressAutocomplete } from "./AddressAutocomplete";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
     Dialog,
@@ -36,22 +37,20 @@ export default function CreateEventModal({
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [coordenadas, setCoordenadas] = useState<{ lat: number; lng: number } | null>(null);
+    const [coordsFromAutocomplete, setCoordsFromAutocomplete] = useState(false);
     const [form, setForm] = useState<{
         titulo: string;
         origen: string;
         nivelUrgencia: NivelUrgencia;
         direccionExacta: string;
         telefonoContacto: string;
-        latitud: string;
-        longitud: string;
     }>({
         titulo: "",
         origen: "",
         nivelUrgencia: NivelUrgencia.BAJA,
         direccionExacta: "",
         telefonoContacto: "",
-        latitud: "",
-        longitud: "",
     });
 
     function resetForm() {
@@ -61,9 +60,9 @@ export default function CreateEventModal({
             nivelUrgencia: NivelUrgencia.BAJA,
             direccionExacta: "",
             telefonoContacto: "",
-            latitud: "",
-            longitud: "",
         });
+        setCoordenadas(null);
+        setCoordsFromAutocomplete(false);
         setError(null);
     }
 
@@ -93,14 +92,6 @@ export default function CreateEventModal({
         setLoading(true);
         setError(null);
 
-        const coordenadas =
-            form.latitud && form.longitud
-                ? {
-                      lat: parseFloat(form.latitud),
-                      lng: parseFloat(form.longitud),
-                  }
-                : undefined;
-
         try {
             const res = await fetch("/api/events", {
                 method: "POST",
@@ -112,7 +103,7 @@ export default function CreateEventModal({
                     direccionExacta: form.direccionExacta,
                     telefonoContacto:
                         form.telefonoContacto || undefined,
-                    coordenadas,
+                    coordenadas: coordenadas ?? null,
                 }),
             });
 
@@ -180,15 +171,32 @@ export default function CreateEventModal({
                     </Select>
                 </div>
 
-                <div className="space-y-2">
-                    <Label htmlFor="direccionExacta">Dirección Exacta</Label>
-                    <Input
-                        id="direccionExacta"
-                        name="direccionExacta"
+                <div className="space-y-1">
+                    <label htmlFor="evento-direccion" className="text-sm font-medium">
+                        Dirección <span className="text-destructive">*</span>
+                    </label>
+                    <AddressAutocomplete
+                        id="evento-direccion"
                         value={form.direccionExacta}
-                        onChange={handleChange}
+                        onChange={(v) => setForm((prev) => ({ ...prev, direccionExacta: v }))}
+                        onSelect={(place) => {
+                            setForm((prev) => ({ ...prev, direccionExacta: place.description }));
+                            setCoordenadas({ lat: place.lat, lng: place.lng });
+                            setCoordsFromAutocomplete(true);
+                        }}
+                        onClearCoords={() => {
+                            if (form.direccionExacta.trim().length === 0) {
+                                setCoordenadas(null);
+                                setCoordsFromAutocomplete(false);
+                            }
+                        }}
                         required
                     />
+                    {coordsFromAutocomplete && coordenadas && (
+                        <p className="text-xs text-muted-foreground">
+                            📍 Ubicación seleccionada — editar la dirección no actualiza el pin
+                        </p>
+                    )}
                 </div>
 
                 <div className="space-y-2">
@@ -200,17 +208,6 @@ export default function CreateEventModal({
                         value={form.telefonoContacto}
                         onChange={handleChange}
                     />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="latitud">Latitud</Label>
-                        <Input id="latitud" name="latitud" type="number" step="any" value={form.latitud} onChange={handleChange} />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="longitud">Longitud</Label>
-                        <Input id="longitud" name="longitud" type="number" step="any" value={form.longitud} onChange={handleChange} />
-                    </div>
                 </div>
 
                 <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
