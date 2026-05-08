@@ -2,6 +2,8 @@
 
 import { EventoWithRelations } from "@/types";
 import { NivelUrgencia } from "@prisma/client";
+import { Siren } from "lucide-react";
+import EmptyState from "@/components/EmptyState";
 import {
     Table,
     TableBody,
@@ -43,11 +45,11 @@ export default function EventList({
 
     if (eventos.length === 0) {
         return (
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-8 text-center">
-                <p className="text-muted-foreground">
-                    No hay eventos registrados.
-                </p>
-            </div>
+            <EmptyState
+                icon={Siren}
+                title="No hay eventos"
+                description="Aún no se han registrado eventos en este listado"
+            />
         );
     }
 
