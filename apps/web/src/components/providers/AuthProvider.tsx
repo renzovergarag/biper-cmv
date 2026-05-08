@@ -8,6 +8,7 @@ import {
     ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface User {
     id: string;
@@ -36,6 +37,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         async function fetchMe() {
             try {
                 const res = await fetch("/api/auth/me");
+                if (res.status === 401) {
+                    setUser(null);
+                    setToken(null);
+                    if (window.location.pathname.startsWith("/dashboard")) {
+                        toast.error("Tu sesión expiró");
+                        router.push("/login");
+                    }
+                    return;
+                }
                 if (res.ok) {
                     const data = await res.json();
                     setUser(data.user);
@@ -53,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
 
         fetchMe();
-    }, []);
+    }, [router]);
 
     async function logout() {
         try {
