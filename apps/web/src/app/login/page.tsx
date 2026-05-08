@@ -56,7 +56,7 @@ export default function LoginPage() {
         <div className="min-h-svh flex items-center justify-center bg-muted/40 p-6">
             <div className="w-full max-w-sm flex flex-col items-center gap-6">
                 <Image
-                    src="/Logo BN V.jpg"
+                    src="/Logo BN Sin Fondo.png"
                     alt="Corporación Municipal Valparaíso"
                     width={180}
                     height={180}

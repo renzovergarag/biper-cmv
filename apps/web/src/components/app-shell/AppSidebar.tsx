@@ -37,13 +37,13 @@ export default function AppSidebar() {
                                 href={homeHref}
                                 className="flex items-center gap-2"
                             >
-                                <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-md bg-sidebar-primary/5">
+                                <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-md">
                                     <Image
-                                        src="/Logo BN V.jpg"
+                                        src="/Logo BN Sin Fondo.png"
                                         alt="CMV"
-                                        width={28}
-                                        height={28}
-                                        className="h-7 w-auto"
+                                        width={32}
+                                        height={32}
+                                        className="h-8 w-auto"
                                     />
                                 </div>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
