@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import {
     Card,
@@ -49,9 +49,13 @@ export default function EventsAreaChart({
     const [range, setRange] = useState<Range>(initialRange);
     const [data, setData] = useState(initialData);
     const [loading, setLoading] = useState(false);
+    const isFirstRun = useRef(true);
 
     useEffect(() => {
-        if (range === initialRange) return;
+        if (isFirstRun.current) {
+            isFirstRun.current = false;
+            return;
+        }
         let cancelled = false;
         setLoading(true);
         fetch(`/api/admin/stats/events-by-day?range=${range}`)
@@ -70,7 +74,7 @@ export default function EventsAreaChart({
         return () => {
             cancelled = true;
         };
-    }, [range, initialRange]);
+    }, [range]);
 
     const isEmpty = data.every((d) => d.count === 0);
 
