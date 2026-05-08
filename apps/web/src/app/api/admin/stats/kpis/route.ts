@@ -18,23 +18,31 @@ async function fetchAgentsOnline(): Promise<{
     count: number;
     stale: boolean;
 }> {
+    const socketUrl =
+        process.env.SOCKET_SERVER_INTERNAL_URL ||
+        process.env.SOCKET_SERVER_URL ||
+        "http://localhost:4000";
+    const url = `${socketUrl}/internal/agents-online`;
     try {
-        const socketUrl =
-            process.env.SOCKET_SERVER_INTERNAL_URL ||
-            process.env.SOCKET_SERVER_URL ||
-            "http://localhost:4000";
         const token = await generateInternalToken();
-        const res = await fetch(`${socketUrl}/internal/agents-online`, {
+        const res = await fetch(url, {
             headers: { Authorization: `Bearer ${token}` },
             cache: "no-store",
         });
         if (!res.ok) {
+            const body = await res.text().catch(() => "<unreadable>");
+            console.error(
+                `[stats/kpis] agents-online ${res.status} from ${url}: ${body.slice(0, 200)}`
+            );
             return { count: 0, stale: true };
         }
         const data = (await res.json()) as AgentsOnlineResponse;
         return { count: data.count ?? 0, stale: false };
     } catch (err) {
-        console.error("[stats/kpis] fetch agents-online failed:", err);
+        console.error(
+            `[stats/kpis] fetch ${url} failed:`,
+            err instanceof Error ? err.message : err
+        );
         return { count: 0, stale: true };
     }
 }
