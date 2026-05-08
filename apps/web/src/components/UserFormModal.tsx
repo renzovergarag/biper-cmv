@@ -9,10 +9,17 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import {
+    Drawer,
+    DrawerContent,
+    DrawerDescription,
+    DrawerHeader,
+    DrawerTitle,
+} from "@/components/ui/drawer";
 import type { UserListItem } from "@/types";
 import type { Rol } from "@prisma/client";
 
@@ -92,6 +99,109 @@ export default function UserFormModal({
         }
     };
 
+    const isMobile = useMediaQuery("(max-width: 639px)");
+
+    function FormBody() {
+        return (
+            <form onSubmit={handleSubmit} className="space-y-4">
+                {error && (
+                    <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md text-sm">
+                        {error}
+                    </div>
+                )}
+
+                <div className="space-y-2">
+                    <Label htmlFor="nombre">Nombre</Label>
+                    <Input
+                        id="nombre"
+                        type="text"
+                        value={nombre}
+                        onChange={(e) => setNombre(e.target.value)}
+                        required
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="password">
+                        Contraseña
+                        {isEditing && (
+                            <span className="font-normal text-muted-foreground ml-1">
+                                (dejar vacío para mantener)
+                            </span>
+                        )}
+                    </Label>
+                    <Input
+                        id="password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required={!isEditing}
+                        minLength={6}
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <Label htmlFor="rol">Rol</Label>
+                    <Select value={rol} onValueChange={(v) => setRol(v as Rol)}>
+                        <SelectTrigger id="rol">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="AGENT">Agente</SelectItem>
+                            <SelectItem value="ADMIN">Admin</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
+                    <Button type="button" variant="outline" onClick={onClose}>
+                        Cancelar
+                    </Button>
+                    <Button type="submit" disabled={saving}>
+                        {saving
+                            ? "Guardando..."
+                            : isEditing
+                              ? "Guardar Cambios"
+                              : "Crear Usuario"}
+                    </Button>
+                </div>
+            </form>
+        );
+    }
+
+    if (isMobile) {
+        return (
+            <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
+                <DrawerContent>
+                    <DrawerHeader className="text-left">
+                        <DrawerTitle>
+                            {isEditing ? "Editar Usuario" : "Nuevo Usuario"}
+                        </DrawerTitle>
+                        <DrawerDescription>
+                            {isEditing
+                                ? "Modifica los datos del usuario"
+                                : "Crea un nuevo usuario en el sistema"}
+                        </DrawerDescription>
+                    </DrawerHeader>
+                    <div className="px-4 pb-6">
+                        <FormBody />
+                    </div>
+                </DrawerContent>
+            </Drawer>
+        );
+    }
+
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="sm:max-w-md">
@@ -105,81 +215,7 @@ export default function UserFormModal({
                             : "Crea un nuevo usuario en el sistema"}
                     </DialogDescription>
                 </DialogHeader>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    {error && (
-                        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md text-sm">
-                            {error}
-                        </div>
-                    )}
-
-                    <div className="space-y-2">
-                        <Label htmlFor="nombre">Nombre</Label>
-                        <Input
-                            id="nombre"
-                            type="text"
-                            value={nombre}
-                            onChange={(e) => setNombre(e.target.value)}
-                            required
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                            id="email"
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="password">
-                            Contraseña
-                            {isEditing && (
-                                <span className="font-normal text-muted-foreground ml-1">
-                                    (dejar vacío para mantener)
-                                </span>
-                            )}
-                        </Label>
-                        <Input
-                            id="password"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required={!isEditing}
-                            minLength={6}
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="rol">Rol</Label>
-                        <Select value={rol} onValueChange={(v) => setRol(v as Rol)}>
-                            <SelectTrigger id="rol">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="AGENT">Agente</SelectItem>
-                                <SelectItem value="ADMIN">Admin</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    <DialogFooter>
-                        <Button type="button" variant="outline" onClick={onClose}>
-                            Cancelar
-                        </Button>
-                        <Button type="submit" disabled={saving}>
-                            {saving
-                                ? "Guardando..."
-                                : isEditing
-                                  ? "Guardar Cambios"
-                                  : "Crear Usuario"}
-                        </Button>
-                    </DialogFooter>
-                </form>
+                <FormBody />
             </DialogContent>
         </Dialog>
     );
