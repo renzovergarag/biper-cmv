@@ -137,8 +137,7 @@ export default function AgentDashboardClient({
                                         onClick={() =>
                                             handleAsignar(evento.id)
                                         }
-                                        className="w-full"
-                                        size="sm"
+                                        className="w-full h-11 sm:h-9 text-sm"
                                     >
                                         Tomar caso
                                     </Button>
@@ -203,8 +202,7 @@ export default function AgentDashboardClient({
                                                     )
                                                 }
                                                 variant="default"
-                                                className="w-full bg-yellow-600 hover:bg-yellow-700"
-                                                size="sm"
+                                                className="w-full h-11 sm:h-9 text-sm bg-yellow-600 hover:bg-yellow-700"
                                             >
                                                 Marcar En Ruta
                                             </Button>
@@ -221,8 +219,7 @@ export default function AgentDashboardClient({
                                                             EstadoEvento.RESUELTO
                                                         )
                                                     }
-                                                    className="w-full bg-green-600 hover:bg-green-700"
-                                                    size="sm"
+                                                    className="w-full h-11 sm:h-9 text-sm bg-green-600 hover:bg-green-700"
                                                 >
                                                     Resolver
                                                 </Button>
@@ -234,8 +231,7 @@ export default function AgentDashboardClient({
                                                         )
                                                     }
                                                     variant="destructive"
-                                                    size="sm"
-                                                    className="w-full"
+                                                    className="w-full h-11 sm:h-9 text-sm"
                                                 >
                                                     Cancelar
                                                 </Button>
