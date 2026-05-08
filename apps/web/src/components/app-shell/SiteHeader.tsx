@@ -10,6 +10,7 @@ import {
     BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
 import { breadcrumbLabels } from "./nav-config";
+import SocketStatus from "./SocketStatus";
 
 function pageTitle(pathname: string): string {
     if (breadcrumbLabels[pathname]) return breadcrumbLabels[pathname];
@@ -36,6 +37,9 @@ export default function SiteHeader() {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
+            <div className="ml-auto">
+                <SocketStatus />
+            </div>
         </header>
     );
 }
