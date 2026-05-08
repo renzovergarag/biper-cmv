@@ -27,6 +27,7 @@ export default function NavMain({ items }: NavMainProps) {
                         const isActive =
                             pathname === item.href ||
                             (item.href !== "/dashboard/admin" &&
+                                item.href !== "/dashboard/agent" &&
                                 pathname.startsWith(item.href));
                         return (
                             <SidebarMenuItem key={item.href}>
