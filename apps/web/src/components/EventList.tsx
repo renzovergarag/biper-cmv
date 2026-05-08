@@ -18,6 +18,7 @@ import {
     urgenciaLabel,
     estadoLabel,
 } from "@/lib/theme";
+import { AddressLink } from "./AddressLink";
 
 interface EventListProps {
     eventos: EventoWithRelations[];
@@ -79,8 +80,15 @@ export default function EventList({
                                 }
                                 onClick={() => onEventClick?.(evento.id)}
                             >
-                                <TableCell className="font-medium">
-                                    {evento.titulo}
+                                <TableCell>
+                                    <div className="font-medium">{evento.titulo}</div>
+                                    {evento.direccionExacta && (
+                                        <AddressLink
+                                            direccion={evento.direccionExacta}
+                                            coordenadas={evento.coordenadas as { lat: number; lng: number } | null | undefined}
+                                            className="text-xs text-muted-foreground"
+                                        />
+                                    )}
                                 </TableCell>
                                 {!isCompact && (
                                     <TableCell className="text-muted-foreground">
@@ -144,6 +152,20 @@ export default function EventList({
                                     Origen
                                 </span>
                                 <span className="text-sm">{evento.origen}</span>
+                            </div>
+                        )}
+                        {evento.direccionExacta && (
+                            <div className="flex justify-between items-start">
+                                <span className="text-xs text-muted-foreground w-20 flex-shrink-0">
+                                    Dirección
+                                </span>
+                                <div className="text-sm text-right">
+                                    <AddressLink
+                                        direccion={evento.direccionExacta}
+                                        coordenadas={evento.coordenadas as { lat: number; lng: number } | null | undefined}
+                                        className="text-sm"
+                                    />
+                                </div>
                             </div>
                         )}
                         <div className="flex justify-between items-center">
