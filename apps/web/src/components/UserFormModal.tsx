@@ -101,84 +101,85 @@ export default function UserFormModal({
 
     const isMobile = useMediaQuery("(max-width: 639px)");
 
-    function FormBody() {
-        return (
-            <form onSubmit={handleSubmit} className="space-y-4">
-                {error && (
-                    <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md text-sm">
-                        {error}
-                    </div>
-                )}
-
-                <div className="space-y-2">
-                    <Label htmlFor="nombre">Nombre</Label>
-                    <Input
-                        id="nombre"
-                        type="text"
-                        value={nombre}
-                        onChange={(e) => setNombre(e.target.value)}
-                        required
-                    />
+    const formBody = (
+        <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+                <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md text-sm">
+                    {error}
                 </div>
+            )}
 
-                <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                        id="email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                </div>
+            <div className="space-y-2">
+                <Label htmlFor="nombre">Nombre</Label>
+                <Input
+                    id="nombre"
+                    type="text"
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
+                    autoComplete="name"
+                    required
+                />
+            </div>
 
-                <div className="space-y-2">
-                    <Label htmlFor="password">
-                        Contraseña
-                        {isEditing && (
-                            <span className="font-normal text-muted-foreground ml-1">
-                                (dejar vacío para mantener)
-                            </span>
-                        )}
-                    </Label>
-                    <Input
-                        id="password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required={!isEditing}
-                        minLength={6}
-                    />
-                </div>
+            <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email"
+                    required
+                />
+            </div>
 
-                <div className="space-y-2">
-                    <Label htmlFor="rol">Rol</Label>
-                    <Select value={rol} onValueChange={(v) => setRol(v as Rol)}>
-                        <SelectTrigger id="rol">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="AGENT">Agente</SelectItem>
-                            <SelectItem value="ADMIN">Admin</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
+            <div className="space-y-2">
+                <Label htmlFor="password">
+                    Contraseña
+                    {isEditing && (
+                        <span className="font-normal text-muted-foreground ml-1">
+                            (dejar vacío para mantener)
+                        </span>
+                    )}
+                </Label>
+                <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="new-password"
+                    required={!isEditing}
+                    minLength={6}
+                />
+            </div>
 
-                <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
-                    <Button type="button" variant="outline" onClick={onClose}>
-                        Cancelar
-                    </Button>
-                    <Button type="submit" disabled={saving}>
-                        {saving
-                            ? "Guardando..."
-                            : isEditing
-                              ? "Guardar Cambios"
-                              : "Crear Usuario"}
-                    </Button>
-                </div>
-            </form>
-        );
-    }
+            <div className="space-y-2">
+                <Label htmlFor="rol">Rol</Label>
+                <Select value={rol} onValueChange={(v) => setRol(v as Rol)}>
+                    <SelectTrigger id="rol">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="AGENT">Agente</SelectItem>
+                        <SelectItem value="ADMIN">Admin</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
+                <Button type="button" variant="outline" onClick={onClose}>
+                    Cancelar
+                </Button>
+                <Button type="submit" disabled={saving}>
+                    {saving
+                        ? "Guardando..."
+                        : isEditing
+                          ? "Guardar Cambios"
+                          : "Crear Usuario"}
+                </Button>
+            </div>
+        </form>
+    );
 
     if (isMobile) {
         return (
@@ -195,7 +196,7 @@ export default function UserFormModal({
                         </DrawerDescription>
                     </DrawerHeader>
                     <div className="px-4 pb-6">
-                        <FormBody />
+                        {formBody}
                     </div>
                 </DrawerContent>
             </Drawer>
@@ -215,7 +216,7 @@ export default function UserFormModal({
                             : "Crea un nuevo usuario en el sistema"}
                     </DialogDescription>
                 </DialogHeader>
-                <FormBody />
+                {formBody}
             </DialogContent>
         </Dialog>
     );
