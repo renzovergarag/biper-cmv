@@ -136,89 +136,88 @@ export default function CreateEventModal({
         </Button>
     );
 
-    function FormBody() {
-        return (
-            <form onSubmit={handleSubmit} className="space-y-4">
-                {error && (
-                    <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md text-sm">
-                        {error}
-                    </div>
+    const formBody = (
+        <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+                <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md text-sm">
+                    {error}
+                </div>
+            )}
+
+            <div className="space-y-2">
+                <Label htmlFor="titulo">Título</Label>
+                <Input id="titulo" name="titulo" value={form.titulo} onChange={handleChange} autoComplete="off" required />
+            </div>
+
+            <div className="space-y-2">
+                <Label htmlFor="origen">Origen</Label>
+                <Input id="origen" name="origen" value={form.origen} onChange={handleChange} autoComplete="off" required />
+            </div>
+
+            <div className="space-y-2">
+                <Label htmlFor="nivelUrgencia">Nivel de Urgencia</Label>
+                <Select value={form.nivelUrgencia} onValueChange={handleUrgenciaChange}>
+                    <SelectTrigger id="nivelUrgencia">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {Object.values(NivelUrgencia).map((nivel) => (
+                            <SelectItem key={nivel} value={nivel}>
+                                {urgenciaLabel[nivel]}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+
+            <div className="space-y-1">
+                <label htmlFor="evento-direccion" className="text-sm font-medium">
+                    Dirección <span className="text-destructive">*</span>
+                </label>
+                <AddressAutocomplete
+                    id="evento-direccion"
+                    value={form.direccionExacta}
+                    onChange={(v) => setForm((prev) => ({ ...prev, direccionExacta: v }))}
+                    onSelect={(place) => {
+                        setForm((prev) => ({ ...prev, direccionExacta: place.description }));
+                        setCoordenadas({ lat: place.lat, lng: place.lng });
+                        setCoordsFromAutocomplete(true);
+                    }}
+                    onClearCoords={() => {
+                        setCoordenadas(null);
+                        setCoordsFromAutocomplete(false);
+                    }}
+                    required
+                />
+                {coordsFromAutocomplete && coordenadas && (
+                    <p className="text-xs text-muted-foreground">
+                        📍 Ubicación seleccionada — editar la dirección no actualiza el pin
+                    </p>
                 )}
+            </div>
 
-                <div className="space-y-2">
-                    <Label htmlFor="titulo">Título</Label>
-                    <Input id="titulo" name="titulo" value={form.titulo} onChange={handleChange} required />
-                </div>
+            <div className="space-y-2">
+                <Label htmlFor="telefonoContacto">Teléfono de Contacto</Label>
+                <Input
+                    id="telefonoContacto"
+                    name="telefonoContacto"
+                    type="tel"
+                    value={form.telefonoContacto}
+                    onChange={handleChange}
+                    autoComplete="tel"
+                />
+            </div>
 
-                <div className="space-y-2">
-                    <Label htmlFor="origen">Origen</Label>
-                    <Input id="origen" name="origen" value={form.origen} onChange={handleChange} required />
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="nivelUrgencia">Nivel de Urgencia</Label>
-                    <Select value={form.nivelUrgencia} onValueChange={handleUrgenciaChange}>
-                        <SelectTrigger id="nivelUrgencia">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {Object.values(NivelUrgencia).map((nivel) => (
-                                <SelectItem key={nivel} value={nivel}>
-                                    {urgenciaLabel[nivel]}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
-
-                <div className="space-y-1">
-                    <label htmlFor="evento-direccion" className="text-sm font-medium">
-                        Dirección <span className="text-destructive">*</span>
-                    </label>
-                    <AddressAutocomplete
-                        id="evento-direccion"
-                        value={form.direccionExacta}
-                        onChange={(v) => setForm((prev) => ({ ...prev, direccionExacta: v }))}
-                        onSelect={(place) => {
-                            setForm((prev) => ({ ...prev, direccionExacta: place.description }));
-                            setCoordenadas({ lat: place.lat, lng: place.lng });
-                            setCoordsFromAutocomplete(true);
-                        }}
-                        onClearCoords={() => {
-                            setCoordenadas(null);
-                            setCoordsFromAutocomplete(false);
-                        }}
-                        required
-                    />
-                    {coordsFromAutocomplete && coordenadas && (
-                        <p className="text-xs text-muted-foreground">
-                            📍 Ubicación seleccionada — editar la dirección no actualiza el pin
-                        </p>
-                    )}
-                </div>
-
-                <div className="space-y-2">
-                    <Label htmlFor="telefonoContacto">Teléfono de Contacto</Label>
-                    <Input
-                        id="telefonoContacto"
-                        name="telefonoContacto"
-                        type="tel"
-                        value={form.telefonoContacto}
-                        onChange={handleChange}
-                    />
-                </div>
-
-                <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
-                    <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-                        Cancelar
-                    </Button>
-                    <Button type="submit" disabled={loading}>
-                        {loading ? "Creando..." : "Crear Evento"}
-                    </Button>
-                </div>
-            </form>
-        );
-    }
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
+                <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                    Cancelar
+                </Button>
+                <Button type="submit" disabled={loading}>
+                    {loading ? "Creando..." : "Crear Evento"}
+                </Button>
+            </div>
+        </form>
+    );
 
     if (isMobile) {
         return (
@@ -232,7 +231,7 @@ export default function CreateEventModal({
                         </DrawerDescription>
                     </DrawerHeader>
                     <div className="px-4 pb-6 max-h-[70vh] overflow-y-auto">
-                        <FormBody />
+                        {formBody}
                     </div>
                 </DrawerContent>
             </Drawer>
@@ -249,7 +248,7 @@ export default function CreateEventModal({
                         Completa los datos del evento para registrarlo en el sistema.
                     </DialogDescription>
                 </DialogHeader>
-                <FormBody />
+                {formBody}
             </DialogContent>
         </Dialog>
     );
