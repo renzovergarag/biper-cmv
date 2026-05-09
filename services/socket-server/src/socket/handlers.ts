@@ -1,17 +1,13 @@
 import { Server, Socket } from "socket.io";
 import { asignarEventoAtomico, actualizarEstadoEvento } from "../lib/api-client.js";
+import {
+    type AgenteConectado,
+    setAgent,
+    removeAgent,
+    listAgents,
+} from "./agents-state.js";
 
 const ESTADOS_VALIDOS = ["EN_RUTA", "RESUELTO", "CANCELADO"] as const;
-
-interface AgenteConectado {
-    userId: string;
-    email: string;
-    nombre: string;
-    socketId: string;
-    connectedAt: string;
-}
-
-const agentesConectados = new Map<string, AgenteConectado>();
 
 async function registrarSesion(
     usuarioId: string,
@@ -51,7 +47,7 @@ export function registerSocketHandlers(io: Server) {
 
             socket.join("admin");
 
-            socket.emit("agentes:lista", Array.from(agentesConectados.values()));
+            socket.emit("agentes:lista", listAgents());
 
             socket.on("disconnect", () => {
                 console.log(`Admin desconectado: ${user.email}`);
@@ -73,7 +69,7 @@ export function registerSocketHandlers(io: Server) {
             connectedAt: new Date().toISOString(),
         };
 
-        agentesConectados.set(user.sub, agente);
+        setAgent(agente);
 
         io.to("admin").emit("agentes:conectado", agente);
 
@@ -151,7 +147,7 @@ export function registerSocketHandlers(io: Server) {
         socket.on("disconnect", () => {
             console.log(`Agente desconectado: ${user.email}`);
 
-            agentesConectados.delete(user.sub);
+            removeAgent(user.sub);
 
             io.to("admin").emit("agentes:desconectado", {
                 userId: user.sub,

@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useState } from "react";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { io, Socket } from "socket.io-client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     Sheet,
@@ -14,8 +13,9 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import type { AgenteConectado } from "@/types";
+import { useConnectedAgents } from "@/hooks/useConnectedAgents";
 
-function AgentList({ agentes }: { agentes: AgenteConectado[] }) {
+export function AgentList({ agentes }: { agentes: AgenteConectado[] }) {
     if (agentes.length === 0) {
         return (
             <p className="text-sm text-muted-foreground text-center py-4">
@@ -55,48 +55,9 @@ function AgentList({ agentes }: { agentes: AgenteConectado[] }) {
 }
 
 export default function ConnectedAgentsPanel() {
-    const { user, token, isLoading } = useAuth();
-    const [agentes, setAgentes] = useState<AgenteConectado[]>([]);
+    const { user, isLoading } = useAuth();
     const [isSheetOpen, setIsSheetOpen] = useState(false);
-
-    const connectSocket = useCallback(() => {
-        if (!token) return undefined;
-
-        const socketUrl =
-            process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000";
-        const s = io(socketUrl, { auth: { token } });
-
-        s.on("connect", () => {
-            s.on("agentes:lista", (data: AgenteConectado[]) => {
-                setAgentes(data);
-            });
-
-            s.on("agentes:conectado", (data: AgenteConectado) => {
-                setAgentes((prev) => {
-                    const filtered = prev.filter(
-                        (a) => a.userId !== data.userId
-                    );
-                    return [...filtered, data];
-                });
-            });
-
-            s.on("agentes:desconectado", (data: { userId: string }) => {
-                setAgentes((prev) =>
-                    prev.filter((a) => a.userId !== data.userId)
-                );
-            });
-        });
-
-        return s;
-    }, [token]);
-
-    useEffect(() => {
-        if (isLoading) return;
-        const s = connectSocket();
-        return () => {
-            s?.disconnect();
-        };
-    }, [isLoading, connectSocket]);
+    const agentes = useConnectedAgents();
 
     if (isLoading) return null;
     if (user?.rol !== "ADMIN") return null;

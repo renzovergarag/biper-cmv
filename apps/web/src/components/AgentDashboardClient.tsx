@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { urgenciaBadgeVariant, urgenciaLabel } from "@/lib/theme";
 import EventNotification from "@/components/EventNotification";
+import { AddressLink } from "./AddressLink";
 
 interface Props {
     initialEventos: EventoWithRelations[];
@@ -131,14 +132,16 @@ export default function AgentDashboardClient({
                                         </Badge>
                                     </div>
                                     <p className="text-sm text-muted-foreground mb-3">
-                                        {evento.direccionExacta}
+                                        <AddressLink
+                                            direccion={evento.direccionExacta}
+                                            coordenadas={evento.coordenadas as { lat: number; lng: number } | null | undefined}
+                                        />
                                     </p>
                                     <Button
                                         onClick={() =>
                                             handleAsignar(evento.id)
                                         }
-                                        className="w-full"
-                                        size="sm"
+                                        className="w-full h-11 sm:h-9 text-sm"
                                     >
                                         Tomar caso
                                     </Button>
@@ -183,7 +186,10 @@ export default function AgentDashboardClient({
                                         </Badge>
                                     </div>
                                     <p className="text-sm text-muted-foreground mb-1">
-                                        {evento.direccionExacta}
+                                        <AddressLink
+                                            direccion={evento.direccionExacta}
+                                            coordenadas={evento.coordenadas as { lat: number; lng: number } | null | undefined}
+                                        />
                                     </p>
                                     <p className="text-xs text-muted-foreground mb-3">
                                         Estado:{" "}
@@ -203,8 +209,7 @@ export default function AgentDashboardClient({
                                                     )
                                                 }
                                                 variant="default"
-                                                className="w-full bg-yellow-600 hover:bg-yellow-700"
-                                                size="sm"
+                                                className="w-full h-11 sm:h-9 text-sm bg-yellow-600 hover:bg-yellow-700"
                                             >
                                                 Marcar En Ruta
                                             </Button>
@@ -221,8 +226,7 @@ export default function AgentDashboardClient({
                                                             EstadoEvento.RESUELTO
                                                         )
                                                     }
-                                                    className="w-full bg-green-600 hover:bg-green-700"
-                                                    size="sm"
+                                                    className="w-full h-11 sm:h-9 text-sm bg-green-600 hover:bg-green-700"
                                                 >
                                                     Resolver
                                                 </Button>
@@ -234,8 +238,7 @@ export default function AgentDashboardClient({
                                                         )
                                                     }
                                                     variant="destructive"
-                                                    size="sm"
-                                                    className="w-full"
+                                                    className="w-full h-11 sm:h-9 text-sm"
                                                 >
                                                     Cancelar
                                                 </Button>

@@ -2,6 +2,8 @@
 
 import { EventoWithRelations } from "@/types";
 import { NivelUrgencia } from "@prisma/client";
+import { Siren } from "lucide-react";
+import EmptyState from "@/components/EmptyState";
 import {
     Table,
     TableBody,
@@ -16,10 +18,12 @@ import {
     urgenciaLabel,
     estadoLabel,
 } from "@/lib/theme";
+import { AddressLink } from "./AddressLink";
 
 interface EventListProps {
     eventos: EventoWithRelations[];
     onEventClick?: (eventoId: string) => void;
+    variant?: "default" | "compact";
 }
 
 function formatDate(date: Date | string): string {
@@ -33,14 +37,20 @@ function formatDate(date: Date | string): string {
     });
 }
 
-export default function EventList({ eventos, onEventClick }: EventListProps) {
+export default function EventList({
+    eventos,
+    onEventClick,
+    variant = "default",
+}: EventListProps) {
+    const isCompact = variant === "compact";
+
     if (eventos.length === 0) {
         return (
-            <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-8 text-center">
-                <p className="text-muted-foreground">
-                    No hay eventos registrados.
-                </p>
-            </div>
+            <EmptyState
+                icon={Siren}
+                title="No hay eventos"
+                description="Aún no se han registrado eventos en este listado"
+            />
         );
     }
 
@@ -52,10 +62,10 @@ export default function EventList({ eventos, onEventClick }: EventListProps) {
                     <TableHeader>
                         <TableRow>
                             <TableHead>Título</TableHead>
-                            <TableHead>Origen</TableHead>
+                            {!isCompact && <TableHead>Origen</TableHead>}
                             <TableHead>Urgencia</TableHead>
                             <TableHead>Estado</TableHead>
-                            <TableHead>Asignado a</TableHead>
+                            {!isCompact && <TableHead>Asignado a</TableHead>}
                             <TableHead>Fecha</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -70,12 +80,21 @@ export default function EventList({ eventos, onEventClick }: EventListProps) {
                                 }
                                 onClick={() => onEventClick?.(evento.id)}
                             >
-                                <TableCell className="font-medium">
-                                    {evento.titulo}
+                                <TableCell>
+                                    <div className="font-medium">{evento.titulo}</div>
+                                    {evento.direccionExacta && (
+                                        <AddressLink
+                                            direccion={evento.direccionExacta}
+                                            coordenadas={evento.coordenadas as { lat: number; lng: number } | null | undefined}
+                                            className="text-xs text-muted-foreground"
+                                        />
+                                    )}
                                 </TableCell>
-                                <TableCell className="text-muted-foreground">
-                                    {evento.origen}
-                                </TableCell>
+                                {!isCompact && (
+                                    <TableCell className="text-muted-foreground">
+                                        {evento.origen}
+                                    </TableCell>
+                                )}
                                 <TableCell>
                                     <Badge
                                         variant={
@@ -92,9 +111,11 @@ export default function EventList({ eventos, onEventClick }: EventListProps) {
                                 <TableCell className="text-muted-foreground">
                                     {estadoLabel[evento.estado]}
                                 </TableCell>
-                                <TableCell className="text-muted-foreground">
-                                    {evento.asignado?.nombre || "—"}
-                                </TableCell>
+                                {!isCompact && (
+                                    <TableCell className="text-muted-foreground">
+                                        {evento.asignado?.nombre || "—"}
+                                    </TableCell>
+                                )}
                                 <TableCell className="text-muted-foreground">
                                     {formatDate(evento.createdAt)}
                                 </TableCell>
@@ -125,12 +146,28 @@ export default function EventList({ eventos, onEventClick }: EventListProps) {
                                 {evento.titulo}
                             </span>
                         </div>
-                        <div className="flex justify-between items-center">
-                            <span className="text-xs text-muted-foreground w-20 flex-shrink-0">
-                                Origen
-                            </span>
-                            <span className="text-sm">{evento.origen}</span>
-                        </div>
+                        {!isCompact && (
+                            <div className="flex justify-between items-center">
+                                <span className="text-xs text-muted-foreground w-20 flex-shrink-0">
+                                    Origen
+                                </span>
+                                <span className="text-sm">{evento.origen}</span>
+                            </div>
+                        )}
+                        {evento.direccionExacta && (
+                            <div className="flex justify-between items-start">
+                                <span className="text-xs text-muted-foreground w-20 flex-shrink-0">
+                                    Dirección
+                                </span>
+                                <div className="text-sm text-right">
+                                    <AddressLink
+                                        direccion={evento.direccionExacta}
+                                        coordenadas={evento.coordenadas as { lat: number; lng: number } | null | undefined}
+                                        className="text-sm"
+                                    />
+                                </div>
+                            </div>
+                        )}
                         <div className="flex justify-between items-center">
                             <span className="text-xs text-muted-foreground w-20 flex-shrink-0">
                                 Urgencia
@@ -155,22 +192,26 @@ export default function EventList({ eventos, onEventClick }: EventListProps) {
                                 {estadoLabel[evento.estado]}
                             </span>
                         </div>
-                        <div className="flex justify-between items-center">
-                            <span className="text-xs text-muted-foreground w-20 flex-shrink-0">
-                                Asignado
-                            </span>
-                            <span className="text-sm">
-                                {evento.asignado?.nombre || "—"}
-                            </span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                            <span className="text-xs text-muted-foreground w-20 flex-shrink-0">
-                                Fecha
-                            </span>
-                            <span className="text-sm">
-                                {formatDate(evento.createdAt)}
-                            </span>
-                        </div>
+                        {!isCompact && (
+                            <div className="flex justify-between items-center">
+                                <span className="text-xs text-muted-foreground w-20 flex-shrink-0">
+                                    Asignado
+                                </span>
+                                <span className="text-sm">
+                                    {evento.asignado?.nombre || "—"}
+                                </span>
+                            </div>
+                        )}
+                        {!isCompact && (
+                            <div className="flex justify-between items-center">
+                                <span className="text-xs text-muted-foreground w-20 flex-shrink-0">
+                                    Fecha
+                                </span>
+                                <span className="text-sm">
+                                    {formatDate(evento.createdAt)}
+                                </span>
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>

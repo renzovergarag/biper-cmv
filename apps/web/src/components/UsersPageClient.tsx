@@ -13,14 +13,12 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import UserFormModal from "@/components/UserFormModal";
-import SessionLogsTab from "@/components/SessionLogsTab";
 import { Plus } from "lucide-react";
 import type { UserListItem } from "@/types";
 
 export default function UsersPageClient() {
     const [usuarios, setUsuarios] = useState<UserListItem[]>([]);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<"usuarios" | "logs">("usuarios");
     const [modalOpen, setModalOpen] = useState(false);
     const [editingUser, setEditingUser] = useState<UserListItem | null>(null);
 
@@ -103,45 +101,19 @@ export default function UsersPageClient() {
 
     return (
         <div>
-            <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-foreground">
-                    Gestión de Usuarios
-                </h2>
-                <Button onClick={handleCreate}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nuevo Usuario
-                </Button>
+            <div className="sticky top-14 z-20 -mx-4 lg:-mx-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                <div className="px-4 lg:px-6 py-3 flex items-center justify-between gap-3">
+                    <h2 className="text-xl font-bold truncate">Usuarios</h2>
+                    <Button onClick={handleCreate}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Nuevo
+                        <span className="hidden sm:inline">&nbsp;Usuario</span>
+                    </Button>
+                </div>
             </div>
 
-            <div className="mb-6 border-b">
-                <nav className="flex gap-4">
-                    <button
-                        onClick={() => setActiveTab("usuarios")}
-                        className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
-                            activeTab === "usuarios"
-                                ? "border-primary text-primary"
-                                : "border-transparent text-muted-foreground hover:text-foreground"
-                        }`}
-                    >
-                        Usuarios
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("logs")}
-                        className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
-                            activeTab === "logs"
-                                ? "border-primary text-primary"
-                                : "border-transparent text-muted-foreground hover:text-foreground"
-                        }`}
-                    >
-                        Logs de Sesión
-                    </button>
-                </nav>
-            </div>
-
-            {activeTab === "usuarios" ? (
-                <>
-                    {/* --- Desktop: tabla (≥1024px) --- */}
-                    <div className="hidden lg:block rounded-lg border bg-card text-card-foreground shadow-sm">
+            {/* --- Desktop: tabla (≥1024px) --- */}
+            <div className="hidden lg:block rounded-lg border bg-card text-card-foreground shadow-sm">
                         <Table>
                             <TableHeader>
                                 <TableRow>
@@ -310,10 +282,6 @@ export default function UsersPageClient() {
                             </div>
                         ))}
                     </div>
-                </>
-            ) : (
-                <SessionLogsTab usuarios={usuarios} />
-            )}
 
             <UserFormModal
                 isOpen={modalOpen}

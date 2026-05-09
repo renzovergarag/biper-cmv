@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
         if (fechaDesde || fechaHasta) {
             const timestamp: Record<string, Date> = {};
             if (fechaDesde) timestamp.gte = new Date(fechaDesde);
-            if (fechaHasta) timestamp.lte = new Date(fechaHasta + "T23:59:59.999Z");
+            if (fechaHasta) timestamp.lte = new Date(fechaHasta);
             where.timestamp = timestamp;
         }
 

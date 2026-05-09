@@ -72,22 +72,28 @@ export default function AdminDashboardClient({
 
     return (
         <div>
-            <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                    <h2 className="text-2xl font-bold text-foreground">
-                        Panel de Administración
-                    </h2>
-                    {connected && (
-                        <Badge
-                            variant="outline"
-                            className="gap-1.5 border-green-300 text-green-700"
-                        >
-                            <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-                            Tiempo real conectado
-                        </Badge>
-                    )}
+            <div className="sticky top-14 z-20 -mx-4 lg:-mx-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                <div className="px-4 lg:px-6 py-3 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                        <h2 className="text-xl font-bold truncate">Eventos</h2>
+                        {connected && (
+                            <Badge
+                                variant="outline"
+                                className="hidden sm:inline-flex gap-1.5 border-green-300 text-green-700"
+                            >
+                                <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                                Tiempo real
+                            </Badge>
+                        )}
+                        {connected && (
+                            <span
+                                className="sm:hidden h-2 w-2 rounded-full bg-green-500"
+                                title="Tiempo real conectado"
+                            />
+                        )}
+                    </div>
+                    <CreateEventModal onEventCreated={handleEventCreated} />
                 </div>
-                <CreateEventModal onEventCreated={handleEventCreated} />
             </div>
 
             <EventList eventos={eventos} onEventClick={handleEventClick} />

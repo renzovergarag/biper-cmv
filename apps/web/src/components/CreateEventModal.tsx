@@ -5,16 +5,25 @@ import { NivelUrgencia } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AddressAutocomplete } from "./AddressAutocomplete";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import {
+    Drawer,
+    DrawerContent,
+    DrawerDescription,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
+} from "@/components/ui/drawer";
 import { Plus } from "lucide-react";
 import { urgenciaLabel } from "@/lib/theme";
 
@@ -28,22 +37,20 @@ export default function CreateEventModal({
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [coordenadas, setCoordenadas] = useState<{ lat: number; lng: number } | null>(null);
+    const [coordsFromAutocomplete, setCoordsFromAutocomplete] = useState(false);
     const [form, setForm] = useState<{
         titulo: string;
         origen: string;
         nivelUrgencia: NivelUrgencia;
         direccionExacta: string;
         telefonoContacto: string;
-        latitud: string;
-        longitud: string;
     }>({
         titulo: "",
         origen: "",
         nivelUrgencia: NivelUrgencia.BAJA,
         direccionExacta: "",
         telefonoContacto: "",
-        latitud: "",
-        longitud: "",
     });
 
     function resetForm() {
@@ -53,9 +60,9 @@ export default function CreateEventModal({
             nivelUrgencia: NivelUrgencia.BAJA,
             direccionExacta: "",
             telefonoContacto: "",
-            latitud: "",
-            longitud: "",
         });
+        setCoordenadas(null);
+        setCoordsFromAutocomplete(false);
         setError(null);
     }
 
@@ -85,14 +92,6 @@ export default function CreateEventModal({
         setLoading(true);
         setError(null);
 
-        const coordenadas =
-            form.latitud && form.longitud
-                ? {
-                      lat: parseFloat(form.latitud),
-                      lng: parseFloat(form.longitud),
-                  }
-                : undefined;
-
         try {
             const res = await fetch("/api/events", {
                 method: "POST",
@@ -104,7 +103,7 @@ export default function CreateEventModal({
                     direccionExacta: form.direccionExacta,
                     telefonoContacto:
                         form.telefonoContacto || undefined,
-                    coordenadas,
+                    coordenadas: coordenadas ?? null,
                 }),
             });
 
@@ -128,137 +127,128 @@ export default function CreateEventModal({
         }
     }
 
+    const isMobile = useMediaQuery("(max-width: 639px)");
+
+    const triggerButton = (
+        <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Crear Evento
+        </Button>
+    );
+
+    const formBody = (
+        <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+                <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md text-sm">
+                    {error}
+                </div>
+            )}
+
+            <div className="space-y-2">
+                <Label htmlFor="titulo">Título</Label>
+                <Input id="titulo" name="titulo" value={form.titulo} onChange={handleChange} autoComplete="off" required />
+            </div>
+
+            <div className="space-y-2">
+                <Label htmlFor="origen">Origen</Label>
+                <Input id="origen" name="origen" value={form.origen} onChange={handleChange} autoComplete="off" required />
+            </div>
+
+            <div className="space-y-2">
+                <Label htmlFor="nivelUrgencia">Nivel de Urgencia</Label>
+                <Select value={form.nivelUrgencia} onValueChange={handleUrgenciaChange}>
+                    <SelectTrigger id="nivelUrgencia">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {Object.values(NivelUrgencia).map((nivel) => (
+                            <SelectItem key={nivel} value={nivel}>
+                                {urgenciaLabel[nivel]}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+
+            <div className="space-y-1">
+                <label htmlFor="evento-direccion" className="text-sm font-medium">
+                    Dirección <span className="text-destructive">*</span>
+                </label>
+                <AddressAutocomplete
+                    id="evento-direccion"
+                    value={form.direccionExacta}
+                    onChange={(v) => setForm((prev) => ({ ...prev, direccionExacta: v }))}
+                    onSelect={(place) => {
+                        setForm((prev) => ({ ...prev, direccionExacta: place.description }));
+                        setCoordenadas({ lat: place.lat, lng: place.lng });
+                        setCoordsFromAutocomplete(true);
+                    }}
+                    onClearCoords={() => {
+                        setCoordenadas(null);
+                        setCoordsFromAutocomplete(false);
+                    }}
+                    required
+                />
+                {coordsFromAutocomplete && coordenadas && (
+                    <p className="text-xs text-muted-foreground">
+                        📍 Ubicación seleccionada — editar la dirección no actualiza el pin
+                    </p>
+                )}
+            </div>
+
+            <div className="space-y-2">
+                <Label htmlFor="telefonoContacto">Teléfono de Contacto</Label>
+                <Input
+                    id="telefonoContacto"
+                    name="telefonoContacto"
+                    type="tel"
+                    value={form.telefonoContacto}
+                    onChange={handleChange}
+                    autoComplete="tel"
+                />
+            </div>
+
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
+                <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                    Cancelar
+                </Button>
+                <Button type="submit" disabled={loading}>
+                    {loading ? "Creando..." : "Crear Evento"}
+                </Button>
+            </div>
+        </form>
+    );
+
+    if (isMobile) {
+        return (
+            <Drawer open={open} onOpenChange={handleOpenChange}>
+                <DrawerTrigger asChild>{triggerButton}</DrawerTrigger>
+                <DrawerContent>
+                    <DrawerHeader className="text-left">
+                        <DrawerTitle>Crear nuevo evento</DrawerTitle>
+                        <DrawerDescription>
+                            Completa los datos del evento para registrarlo en el sistema.
+                        </DrawerDescription>
+                    </DrawerHeader>
+                    <div className="px-4 pb-6 max-h-[70vh] overflow-y-auto">
+                        {formBody}
+                    </div>
+                </DrawerContent>
+            </Drawer>
+        );
+    }
+
     return (
         <Dialog open={open} onOpenChange={handleOpenChange}>
-            <DialogTrigger asChild>
-                <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Crear Evento
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-lg">
+            <DialogTrigger asChild>{triggerButton}</DialogTrigger>
+            <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Crear nuevo evento</DialogTitle>
                     <DialogDescription>
-                        Completa los datos del evento para registrarlo en el
-                        sistema.
+                        Completa los datos del evento para registrarlo en el sistema.
                     </DialogDescription>
                 </DialogHeader>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    {error && (
-                        <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-md text-sm">
-                            {error}
-                        </div>
-                    )}
-
-                    <div className="space-y-2">
-                        <Label htmlFor="titulo">Título</Label>
-                        <Input
-                            id="titulo"
-                            name="titulo"
-                            value={form.titulo}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="origen">Origen</Label>
-                        <Input
-                            id="origen"
-                            name="origen"
-                            value={form.origen}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="nivelUrgencia">
-                            Nivel de Urgencia
-                        </Label>
-                        <Select
-                            value={form.nivelUrgencia}
-                            onValueChange={handleUrgenciaChange}
-                        >
-                            <SelectTrigger id="nivelUrgencia">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {Object.values(NivelUrgencia).map((nivel) => (
-                                    <SelectItem key={nivel} value={nivel}>
-                                        {urgenciaLabel[nivel]}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="direccionExacta">
-                            Dirección Exacta
-                        </Label>
-                        <Input
-                            id="direccionExacta"
-                            name="direccionExacta"
-                            value={form.direccionExacta}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="telefonoContacto">
-                            Teléfono de Contacto
-                        </Label>
-                        <Input
-                            id="telefonoContacto"
-                            name="telefonoContacto"
-                            type="tel"
-                            value={form.telefonoContacto}
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="latitud">Latitud</Label>
-                            <Input
-                                id="latitud"
-                                name="latitud"
-                                type="number"
-                                step="any"
-                                value={form.latitud}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="longitud">Longitud</Label>
-                            <Input
-                                id="longitud"
-                                name="longitud"
-                                type="number"
-                                step="any"
-                                value={form.longitud}
-                                onChange={handleChange}
-                            />
-                        </div>
-                    </div>
-
-                    <DialogFooter>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => setOpen(false)}
-                        >
-                            Cancelar
-                        </Button>
-                        <Button type="submit" disabled={loading}>
-                            {loading ? "Creando..." : "Crear Evento"}
-                        </Button>
-                    </DialogFooter>
-                </form>
+                {formBody}
             </DialogContent>
         </Dialog>
     );

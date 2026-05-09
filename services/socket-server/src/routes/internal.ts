@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import { verifySocketToken } from "../lib/auth.js";
+import { listAgents, countAgents } from "../socket/agents-state.js";
 
 const router = Router();
 
@@ -35,5 +36,21 @@ router.post("/internal/events", authenticateInternal, (req: Request, res: Respon
 router.get("/internal/health", (_req: Request, res: Response) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
+
+router.get(
+    "/internal/agents-online",
+    authenticateInternal,
+    (_req: Request, res: Response) => {
+        res.json({
+            count: countAgents(),
+            agents: listAgents().map((a) => ({
+                userId: a.userId,
+                email: a.email,
+                nombre: a.nombre,
+                connectedAt: a.connectedAt,
+            })),
+        });
+    }
+);
 
 export default router;
