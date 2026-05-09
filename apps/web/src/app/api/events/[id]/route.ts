@@ -26,7 +26,7 @@ export async function GET(
                 asignado: true,
                 estadosHistorial: {
                     include: { usuario: true },
-                    orderBy: { timestamp: "desc" },
+                    orderBy: { timestamp: "asc" },
                 },
             },
         });
