@@ -34,6 +34,7 @@ export function EventMapPreview({ coordenadas, className }: Props) {
             <Map
                 center={[coordenadas.lng, coordenadas.lat]}
                 zoom={16}
+                theme="light"
                 styles={OPENFREEMAP_STYLES}
             >
                 <MapMarker
