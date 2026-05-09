@@ -38,6 +38,12 @@
         --sidebar-border: 214.3 31.8% 91.4%;
         --sidebar-ring: 221.2 83.2% 53.3%;
     }
+  .maplibregl-popup-content {
+    @apply bg-transparent! shadow-none! p-0! rounded-none!;
+    }
+  .maplibregl-popup-tip {
+    @apply hidden!;
+    }
 }
 
 @layer base {

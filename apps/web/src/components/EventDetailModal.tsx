@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { EstadoEvento, NivelUrgencia } from "@prisma/client";
 import { EventoWithHistorial } from "@/types";
 import {
@@ -18,6 +19,11 @@ import {
 } from "@/lib/theme";
 import EventTimeline from "./EventTimeline";
 import { AddressLink } from "./AddressLink";
+
+const EventMapPreview = dynamic(
+    () => import("./EventMapPreview").then((m) => m.EventMapPreview),
+    { ssr: false }
+);
 
 interface EventDetailModalProps {
     eventoId: string | null;
@@ -145,6 +151,12 @@ export default function EventDetailModal({
                                 )}
                             </div>
                         </div>
+
+                        {/* Map preview (solo si hay coordenadas) */}
+                        <EventMapPreview
+                            coordenadas={evento.coordenadas as { lat: number; lng: number } | null | undefined}
+                            className="mb-5"
+                        />
 
                         {/* Timeline */}
                         <EventTimeline
