@@ -15,7 +15,7 @@ interface Props {
 
 const OPENFREEMAP_STYLES = {
     light: "https://tiles.openfreemap.org/styles/bright",
-    dark: "https://tiles.openfreemap.org/styles/dark-matter",
+    dark: "https://tiles.openfreemap.org/styles/dark",
 };
 
 export function EventMapPreview({ coordenadas, className }: Props) {
