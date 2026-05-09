@@ -17,6 +17,16 @@ interface Props {
     socketUrl: string;
 }
 
+function formatCreatedAt(date: string | Date): string {
+    const d = typeof date === "string" ? new Date(date) : date;
+    return d.toLocaleDateString("es-ES", {
+        day: "2-digit",
+        month: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+}
+
 export default function AgentDashboardClient({
     initialEventos,
     userId,
@@ -131,11 +141,14 @@ export default function AgentDashboardClient({
                                             ] || evento.nivelUrgencia}
                                         </Badge>
                                     </div>
-                                    <p className="text-sm text-muted-foreground mb-3">
+                                    <p className="text-sm text-muted-foreground mb-1">
                                         <AddressLink
                                             direccion={evento.direccionExacta}
                                             coordenadas={evento.coordenadas as { lat: number; lng: number } | null | undefined}
                                         />
+                                    </p>
+                                    <p className="text-xs text-muted-foreground mb-3">
+                                        Por {evento.creador.nombre} · {formatCreatedAt(evento.createdAt)}
                                     </p>
                                     <Button
                                         onClick={() =>
@@ -190,6 +203,9 @@ export default function AgentDashboardClient({
                                             direccion={evento.direccionExacta}
                                             coordenadas={evento.coordenadas as { lat: number; lng: number } | null | undefined}
                                         />
+                                    </p>
+                                    <p className="text-xs text-muted-foreground mb-1">
+                                        Por {evento.creador.nombre} · {formatCreatedAt(evento.createdAt)}
                                     </p>
                                     <p className="text-xs text-muted-foreground mb-3">
                                         Estado:{" "}

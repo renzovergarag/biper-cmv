@@ -16,8 +16,14 @@ interface EstadoHistorialEntry {
     };
 }
 
+interface CreacionEntry {
+    creador: { nombre: string; rol: string };
+    createdAt: string | Date;
+}
+
 interface EventTimelineProps {
     historial: EstadoHistorialEntry[];
+    creacion?: CreacionEntry;
 }
 
 const estadoDotColor: Record<EstadoEvento, string> = {
@@ -47,8 +53,8 @@ function formatDateTime(date: string | Date): string {
     });
 }
 
-export default function EventTimeline({ historial }: EventTimelineProps) {
-    if (historial.length === 0) {
+export default function EventTimeline({ historial, creacion }: EventTimelineProps) {
+    if (historial.length === 0 && !creacion) {
         return (
             <p className="text-muted-foreground text-sm text-center py-6">
                 Sin historial de estados.
@@ -58,6 +64,21 @@ export default function EventTimeline({ historial }: EventTimelineProps) {
 
     return (
         <div className="border-l-[3px] border-primary pl-4">
+            {creacion && (
+                <div className="relative border rounded-lg p-3 mb-3 bg-emerald-50 border-emerald-200">
+                    <div className="absolute w-3 h-3 rounded-full border-2 border-background -left-[22px] top-4 bg-emerald-500" />
+                    <div className="flex items-center justify-between mb-1">
+                        <span className="font-semibold text-sm">Creación</span>
+                        <span className="text-xs text-muted-foreground">
+                            {formatDateTime(creacion.createdAt)}
+                        </span>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                        Por: {creacion.creador.nombre} ({creacion.creador.rol.toLowerCase()})
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground/50">—</div>
+                </div>
+            )}
             {historial.map((entry) => (
                 <div
                     key={entry.id}

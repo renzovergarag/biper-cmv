@@ -149,6 +149,17 @@ export default function EventDetailModal({
                         {/* Timeline */}
                         <EventTimeline
                             historial={evento.estadosHistorial || []}
+                            creacion={
+                                evento.creador
+                                    ? {
+                                          creador: {
+                                              nombre: evento.creador.nombre,
+                                              rol: evento.creador.rol,
+                                          },
+                                          createdAt: evento.createdAt,
+                                      }
+                                    : undefined
+                            }
                         />
                     </>
                 )}
