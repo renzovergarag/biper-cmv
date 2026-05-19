@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { EstadoEvento, Rol } from "@prisma/client";
+import { Rol } from "@prisma/client";
 import { History } from "lucide-react";
 import { verifyToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -19,9 +19,8 @@ export default async function AgentHistoryPage() {
 
     const eventos = await prisma.evento.findMany({
         where: {
-            asignadoId: decoded.sub,
-            estado: {
-                in: [EstadoEvento.RESUELTO, EstadoEvento.CANCELADO],
+            asignaciones: {
+                some: { agenteId: decoded.sub, estado: "RESUELTO" },
             },
         },
         orderBy: { updatedAt: "desc" },

@@ -27,6 +27,7 @@ export async function GET(
             include: {
                 creador: true,
                 asignado: true,
+                asignaciones: { include: { agente: true } },
                 estadosHistorial: {
                     include: { usuario: true },
                     orderBy: { timestamp: "asc" },

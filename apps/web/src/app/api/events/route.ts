@@ -36,7 +36,11 @@ export async function GET(request: NextRequest) {
         const where: Prisma.EventoWhereInput = {};
         if (estado) where.estado = estado;
         if (nivelUrgencia) where.nivelUrgencia = nivelUrgencia;
-        if (asignadoId) where.asignadoId = asignadoId;
+        if (asignadoId) {
+            where.asignaciones = {
+                some: { agenteId: asignadoId, estado: { not: "ABANDONADO" } },
+            };
+        }
         if (creadorId) where.creadorId = creadorId;
 
         const skip = (page - 1) * limit;
@@ -47,7 +51,11 @@ export async function GET(request: NextRequest) {
                 skip,
                 take: limit,
                 orderBy: { createdAt: "desc" },
-                include: { creador: true, asignado: true },
+                include: {
+                    creador: true,
+                    asignado: true,
+                    asignaciones: { include: { agente: true } },
+                },
             }),
             prisma.evento.count({ where }),
         ]);
@@ -116,7 +124,11 @@ export async function POST(request: NextRequest) {
                 creadorId: decoded.sub,
                 estado: EstadoEvento.PENDIENTE,
             },
-            include: { creador: true, asignado: true },
+            include: {
+                creador: true,
+                asignado: true,
+                asignaciones: { include: { agente: true } },
+            },
         });
 
         try {

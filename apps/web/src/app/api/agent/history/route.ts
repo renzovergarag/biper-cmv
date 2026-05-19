@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { EstadoEvento } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/api-auth";
 
@@ -10,14 +9,20 @@ export async function GET(request: NextRequest) {
     try {
         const eventos = await prisma.evento.findMany({
             where: {
-                asignadoId: auth.user.sub,
-                estado: {
-                    in: [EstadoEvento.RESUELTO, EstadoEvento.CANCELADO],
+                asignaciones: {
+                    some: {
+                        agenteId: auth.user.sub,
+                        estado: "RESUELTO",
+                    },
                 },
             },
             orderBy: { updatedAt: "desc" },
             take: 100,
-            include: { creador: true, asignado: true },
+            include: {
+                creador: true,
+                asignado: true,
+                asignaciones: { include: { agente: true } },
+            },
         });
 
         return NextResponse.json({ eventos });
