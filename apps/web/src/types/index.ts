@@ -5,7 +5,6 @@ export { EstadoAsignacion };
 export type EventoWithRelations = Prisma.EventoGetPayload<{
     include: {
         creador: true;
-        asignado: true;
         asignaciones: { include: { agente: true } };
     };
 }>;
@@ -13,7 +12,6 @@ export type EventoWithRelations = Prisma.EventoGetPayload<{
 export type EventoWithHistorial = Prisma.EventoGetPayload<{
     include: {
         creador: true;
-        asignado: true;
         asignaciones: { include: { agente: true } };
         estadosHistorial: {
             include: { usuario: true };
@@ -41,7 +39,6 @@ export interface Evento {
   telefonoContacto?: string;
   estado: EstadoEvento;
   creadorId: string;
-  asignadoId?: string;
   asignaciones?: Array<{
     id: string;
     agenteId: string;

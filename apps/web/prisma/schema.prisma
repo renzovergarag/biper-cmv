@@ -47,7 +47,6 @@ model User {
   updatedAt        DateTime @updatedAt
 
   eventosCreados   Evento[] @relation("Creador")
-  eventosAsignados Evento[] @relation("Asignado")
   asignaciones     AsignacionEvento[] @relation("AgenteAsignaciones")
   logs             LogAuditoria[]
   historialEstado  EstadoHistorial[]
@@ -66,8 +65,6 @@ model Evento {
   creadorId        String        @db.ObjectId
   creador          User          @relation("Creador", fields: [creadorId], references: [id])
 
-  asignadoId       String?       @db.ObjectId
-  asignado         User?         @relation("Asignado", fields: [asignadoId], references: [id])
   asignaciones     AsignacionEvento[]
 
   createdAt        DateTime      @default(now())
@@ -80,7 +77,6 @@ model Evento {
 
   @@index([estado])
   @@index([creadorId])
-  @@index([asignadoId])
   @@index([nivelUrgencia])
   @@index([createdAt])
 }

@@ -120,7 +120,6 @@ export async function PATCH(request: NextRequest) {
                 where: { id: eventoId },
                 include: {
                     creador: true,
-                    asignado: true,
                     asignaciones: { include: { agente: true } },
                 },
             });

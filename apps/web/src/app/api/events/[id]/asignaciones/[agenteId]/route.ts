@@ -48,7 +48,6 @@ export async function DELETE(
                 where: { id: eventoId },
                 include: {
                     creador: true,
-                    asignado: true,
                     asignaciones: { include: { agente: true } },
                 },
             });

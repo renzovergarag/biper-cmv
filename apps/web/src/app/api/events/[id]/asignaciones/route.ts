@@ -92,7 +92,6 @@ export async function POST(
                 where: { id: eventoId },
                 include: {
                     creador: true,
-                    asignado: true,
                     asignaciones: { include: { agente: true } },
                 },
             });

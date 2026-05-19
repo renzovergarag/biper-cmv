@@ -20,7 +20,6 @@ export async function GET(request: NextRequest) {
             take: 100,
             include: {
                 creador: true,
-                asignado: true,
                 asignaciones: { include: { agente: true } },
             },
         });

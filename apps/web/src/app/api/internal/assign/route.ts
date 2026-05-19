@@ -83,7 +83,6 @@ export async function POST(request: NextRequest) {
                 where: { id: eventoId },
                 include: {
                     creador: true,
-                    asignado: true,
                     asignaciones: { include: { agente: true } },
                 },
             });

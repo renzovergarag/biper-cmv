@@ -20,7 +20,7 @@ export default async function AgentDashboardPage() {
             },
         },
         orderBy: { createdAt: "desc" },
-        include: { creador: true, asignado: true, asignaciones: { include: { agente: true } } },
+        include: { creador: true, asignaciones: { include: { agente: true } } },
     });
 
     return (

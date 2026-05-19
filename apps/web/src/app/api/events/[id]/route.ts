@@ -26,7 +26,6 @@ export async function GET(
             where: { id },
             include: {
                 creador: true,
-                asignado: true,
                 asignaciones: { include: { agente: true } },
                 estadosHistorial: {
                     include: { usuario: true },
@@ -124,7 +123,6 @@ export async function PATCH(
                 where: { id: eventoId },
                 include: {
                     creador: true,
-                    asignado: true,
                     asignaciones: { include: { agente: true } },
                 },
             });
