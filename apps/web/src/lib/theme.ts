@@ -1,4 +1,4 @@
-import { NivelUrgencia, EstadoEvento } from "@prisma/client";
+import { NivelUrgencia, EstadoEvento, EstadoAsignacion } from "@prisma/client";
 
 export const urgenciaBadgeVariant: Record<
     NivelUrgencia,
@@ -34,4 +34,21 @@ export const estadoBadgeVariant: Record<
     [EstadoEvento.EN_RUTA]: "default",
     [EstadoEvento.RESUELTO]: "outline",
     [EstadoEvento.CANCELADO]: "destructive",
+};
+
+export const estadoAsignacionLabel: Record<EstadoAsignacion, string> = {
+    [EstadoAsignacion.ASIGNADO]: "Asignado",
+    [EstadoAsignacion.EN_RUTA]: "En ruta",
+    [EstadoAsignacion.RESUELTO]: "Resuelto",
+    [EstadoAsignacion.ABANDONADO]: "Abandonado",
+};
+
+export const estadoAsignacionBadgeVariant: Record<
+    EstadoAsignacion,
+    "default" | "secondary" | "outline" | "destructive"
+> = {
+    [EstadoAsignacion.ASIGNADO]: "secondary",
+    [EstadoAsignacion.EN_RUTA]: "default",
+    [EstadoAsignacion.RESUELTO]: "outline",
+    [EstadoAsignacion.ABANDONADO]: "destructive",
 };
