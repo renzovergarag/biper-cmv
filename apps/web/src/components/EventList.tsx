@@ -37,6 +37,16 @@ function formatDate(date: Date | string): string {
     });
 }
 
+function resumenAgentes(
+    asignaciones: EventoWithRelations["asignaciones"]
+): string {
+    const activas = asignaciones.filter((a) => a.estado !== "ABANDONADO");
+    if (activas.length === 0) return "—";
+    const nombres = activas.map((a) => a.agente.nombre);
+    if (nombres.length <= 2) return nombres.join(", ");
+    return `${nombres.slice(0, 2).join(", ")} (+${nombres.length - 2})`;
+}
+
 export default function EventList({
     eventos,
     onEventClick,
@@ -113,7 +123,7 @@ export default function EventList({
                                 </TableCell>
                                 {!isCompact && (
                                     <TableCell className="text-muted-foreground">
-                                        {evento.asignado?.nombre || "—"}
+                                        {resumenAgentes(evento.asignaciones)}
                                     </TableCell>
                                 )}
                                 <TableCell className="text-muted-foreground">
@@ -198,7 +208,7 @@ export default function EventList({
                                     Asignado
                                 </span>
                                 <span className="text-sm">
-                                    {evento.asignado?.nombre || "—"}
+                                    {resumenAgentes(evento.asignaciones)}
                                 </span>
                             </div>
                         )}
