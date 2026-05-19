@@ -14,6 +14,9 @@ async function main() {
     await prisma.estadoHistorial.deleteMany({});
   } catch { /* ignore if empty */ }
   try {
+    await prisma.asignacionEvento.deleteMany({});
+  } catch { /* ignore if empty */ }
+  try {
     await prisma.evento.deleteMany({});
   } catch { /* ignore if empty */ }
   try {
