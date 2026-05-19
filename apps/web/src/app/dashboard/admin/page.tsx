@@ -118,7 +118,7 @@ export default async function AdminDashboardPage() {
         prisma.evento.findMany({
             orderBy: { createdAt: "desc" },
             take: 10,
-            include: { creador: true, asignado: true },
+            include: { creador: true, asignado: true, asignaciones: { include: { agente: true } } },
         }),
     ]);
 

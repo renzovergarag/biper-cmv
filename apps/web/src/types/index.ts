@@ -1,13 +1,20 @@
-import { Prisma, Rol, NivelUrgencia, EstadoEvento } from "@prisma/client";
+import { Prisma, Rol, NivelUrgencia, EstadoEvento, EstadoAsignacion } from "@prisma/client";
+
+export { EstadoAsignacion };
 
 export type EventoWithRelations = Prisma.EventoGetPayload<{
-    include: { creador: true; asignado: true };
+    include: {
+        creador: true;
+        asignado: true;
+        asignaciones: { include: { agente: true } };
+    };
 }>;
 
 export type EventoWithHistorial = Prisma.EventoGetPayload<{
     include: {
         creador: true;
         asignado: true;
+        asignaciones: { include: { agente: true } };
         estadosHistorial: {
             include: { usuario: true };
         };
@@ -35,6 +42,12 @@ export interface Evento {
   estado: EstadoEvento;
   creadorId: string;
   asignadoId?: string;
+  asignaciones?: Array<{
+    id: string;
+    agenteId: string;
+    estado: EstadoAsignacion;
+    agente?: { nombre: string };
+  }>;
   createdAt: Date;
   updatedAt: Date;
   assignedAt?: Date;

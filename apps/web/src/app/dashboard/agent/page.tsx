@@ -16,7 +16,7 @@ export default async function AgentDashboardPage() {
     const eventos = await prisma.evento.findMany({
         where: { asignadoId: decoded.sub },
         orderBy: { createdAt: "desc" },
-        include: { creador: true, asignado: true },
+        include: { creador: true, asignado: true, asignaciones: { include: { agente: true } } },
     });
 
     return (
