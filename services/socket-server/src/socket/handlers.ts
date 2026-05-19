@@ -7,7 +7,7 @@ import {
     listAgents,
 } from "./agents-state.js";
 
-const ESTADOS_VALIDOS = ["EN_RUTA", "RESUELTO", "CANCELADO"] as const;
+const ESTADOS_VALIDOS = ["EN_RUTA", "RESUELTO", "ABANDONADO"] as const;
 
 async function registrarSesion(
     usuarioId: string,
@@ -106,7 +106,7 @@ export function registerSocketHandlers(io: Server) {
                     io.emit("evento:actualizado", { evento: result.evento });
                 } else {
                     socket.emit("evento:asignado-error", {
-                        mensaje: "El evento ya fue asignado a otro agente",
+                        mensaje: "El evento ya no admite agentes",
                     });
                 }
             } catch (error) {
