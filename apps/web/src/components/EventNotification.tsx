@@ -85,14 +85,22 @@ export default function EventNotification({ socket }: Props) {
             });
         };
 
+        const handleEstadoError = ({ mensaje }: { mensaje: string }) => {
+            toast.error("No se pudo actualizar el estado", {
+                description: mensaje,
+            });
+        };
+
         socket.on("evento:nuevo", handleNuevo);
         socket.on("evento:asignado-exito", handleAsignadoExito);
         socket.on("evento:asignado-error", handleAsignadoError);
+        socket.on("evento:estado-error", handleEstadoError);
 
         return () => {
             socket.off("evento:nuevo", handleNuevo);
             socket.off("evento:asignado-exito", handleAsignadoExito);
             socket.off("evento:asignado-error", handleAsignadoError);
+            socket.off("evento:estado-error", handleEstadoError);
         };
     }, [socket, playSound, showNotification, openEventModal]);
 

@@ -64,10 +64,11 @@ export interface LogAuditoria {
 export interface SocketEventPayloads {
     "evento:nuevo": { evento: Evento };
     "evento:asignar": { eventoId: string };
-    "evento:actualizar-estado": { eventoId: string; nuevoEstado: EstadoEvento };
+    "evento:actualizar-estado": { eventoId: string; nuevoEstado: EstadoAsignacion };
     "evento:actualizado": { evento: Evento };
     "evento:asignado-exito": { evento: Evento };
     "evento:asignado-error": { mensaje: string };
+    "evento:estado-error": { mensaje: string };
 }
 
 export interface AgenteConectado {
