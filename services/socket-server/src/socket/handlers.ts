@@ -7,7 +7,7 @@ import {
     listAgents,
 } from "./agents-state.js";
 
-const ESTADOS_VALIDOS = ["EN_RUTA", "RESUELTO", "CANCELADO"] as const;
+const ESTADOS_VALIDOS = ["EN_RUTA", "RESUELTO", "ABANDONADO"] as const;
 
 async function registrarSesion(
     usuarioId: string,
@@ -106,7 +106,7 @@ export function registerSocketHandlers(io: Server) {
                     io.emit("evento:actualizado", { evento: result.evento });
                 } else {
                     socket.emit("evento:asignado-error", {
-                        mensaje: "El evento ya fue asignado a otro agente",
+                        mensaje: "El evento ya no admite agentes",
                     });
                 }
             } catch (error) {
@@ -119,12 +119,16 @@ export function registerSocketHandlers(io: Server) {
 
         socket.on("evento:actualizar-estado", async ({ eventoId, nuevoEstado }) => {
             if (!eventoId || typeof eventoId !== "string") {
-                socket.emit("error", { mensaje: "eventoId es requerido" });
+                socket.emit("evento:estado-error", {
+                    mensaje: "eventoId es requerido",
+                });
                 return;
             }
 
             if (!nuevoEstado || !ESTADOS_VALIDOS.includes(nuevoEstado as any)) {
-                socket.emit("error", { mensaje: "Estado no válido" });
+                socket.emit("evento:estado-error", {
+                    mensaje: "Estado no válido",
+                });
                 return;
             }
 
@@ -140,7 +144,12 @@ export function registerSocketHandlers(io: Server) {
                 }
             } catch (error) {
                 console.error("Error al actualizar estado:", error);
-                socket.emit("error", { mensaje: "Error al actualizar estado" });
+                socket.emit("evento:estado-error", {
+                    mensaje:
+                        error instanceof Error
+                            ? error.message
+                            : "Error al actualizar estado",
+                });
             }
         });
 

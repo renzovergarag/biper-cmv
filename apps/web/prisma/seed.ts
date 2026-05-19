@@ -14,6 +14,9 @@ async function main() {
     await prisma.estadoHistorial.deleteMany({});
   } catch { /* ignore if empty */ }
   try {
+    await prisma.asignacionEvento.deleteMany({});
+  } catch { /* ignore if empty */ }
+  try {
     await prisma.evento.deleteMany({});
   } catch { /* ignore if empty */ }
   try {
@@ -91,8 +94,14 @@ async function main() {
       telefonoContacto: "+56987654321",
       estado: EstadoEvento.ASIGNADO,
       creadorId: admin.id,
-      asignadoId: agente1.id,
       assignedAt: new Date(Date.now() - 3600000),
+      asignaciones: {
+        create: {
+          agenteId: agente1.id,
+          estado: "ASIGNADO",
+          assignedAt: new Date(Date.now() - 3600000),
+        },
+      },
     },
   });
   console.log(`✅ Evento 3 creado: ${evento3.titulo} (ASIGNADO)`);
@@ -106,8 +115,14 @@ async function main() {
       coordenadas: { lat: -29.9027, lng: -71.2519 },
       estado: EstadoEvento.EN_RUTA,
       creadorId: admin.id,
-      asignadoId: agente2.id,
       assignedAt: new Date(Date.now() - 7200000),
+      asignaciones: {
+        create: {
+          agenteId: agente2.id,
+          estado: "EN_RUTA",
+          assignedAt: new Date(Date.now() - 7200000),
+        },
+      },
     },
   });
   console.log(`✅ Evento 4 creado: ${evento4.titulo} (EN_RUTA)`);
@@ -120,9 +135,16 @@ async function main() {
       direccionExacta: "Av. España 890, Antofagasta",
       estado: EstadoEvento.RESUELTO,
       creadorId: admin.id,
-      asignadoId: agente1.id,
       assignedAt: new Date(Date.now() - 86400000),
       resolvedAt: new Date(Date.now() - 43200000),
+      asignaciones: {
+        create: {
+          agenteId: agente1.id,
+          estado: "RESUELTO",
+          assignedAt: new Date(Date.now() - 86400000),
+          resolvedAt: new Date(Date.now() - 43200000),
+        },
+      },
     },
   });
   console.log(`✅ Evento 5 creado: ${evento5.titulo} (RESUELTO)`);

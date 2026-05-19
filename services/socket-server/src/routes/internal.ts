@@ -33,6 +33,22 @@ router.post("/internal/events", authenticateInternal, (req: Request, res: Respon
   res.json({ success: true });
 });
 
+router.post(
+    "/internal/evento-actualizado",
+    authenticateInternal,
+    (req: Request, res: Response) => {
+        const { evento } = req.body;
+
+        if (!evento) {
+            return res.status(400).json({ error: "Datos de evento requeridos" });
+        }
+
+        req.app.get("io").emit("evento:actualizado", { evento });
+
+        res.json({ success: true });
+    }
+);
+
 router.get("/internal/health", (_req: Request, res: Response) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });

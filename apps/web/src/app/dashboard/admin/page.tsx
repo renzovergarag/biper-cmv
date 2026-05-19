@@ -101,10 +101,7 @@ export default async function AdminDashboardPage() {
             where: { createdAt: { gte: startOfToday } },
         }),
         prisma.evento.count({
-            where: {
-                estado: EstadoEvento.PENDIENTE,
-                asignadoId: null,
-            },
+            where: { estado: EstadoEvento.PENDIENTE },
         }),
         prisma.evento.count({
             where: {
@@ -118,7 +115,7 @@ export default async function AdminDashboardPage() {
         prisma.evento.findMany({
             orderBy: { createdAt: "desc" },
             take: 10,
-            include: { creador: true, asignado: true },
+            include: { creador: true, asignaciones: { include: { agente: true } } },
         }),
     ]);
 

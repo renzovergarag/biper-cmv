@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { EstadoAsignacion, EstadoEvento, Rol } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { verifyInternalToken } from "@/lib/auth";
-import { EstadoAsignacion, EstadoEvento } from "@prisma/client";
+import { requireAdmin } from "@/lib/api-auth";
 import { recalcularEstadoEvento } from "@/lib/asignaciones";
+import { notifyEventoActualizado } from "@/lib/socket-notify";
 
 const ESTADOS_UNIBLES: EstadoEvento[] = [
     EstadoEvento.PENDIENTE,
@@ -10,46 +11,54 @@ const ESTADOS_UNIBLES: EstadoEvento[] = [
     EstadoEvento.EN_RUTA,
 ];
 
-export async function POST(request: NextRequest) {
+export async function POST(
+    request: NextRequest,
+    { params }: { params: { id: string } }
+) {
+    const auth = await requireAdmin(request);
+    if (!auth.ok) return auth.response;
+
     try {
-        const authHeader = request.headers.get("authorization");
-        const token = authHeader?.split(" ")[1];
+        const eventoId = params.id;
+        const { agenteId } = await request.json();
 
-        if (!token) {
-            return NextResponse.json({ error: "Token requerido" }, { status: 401 });
-        }
-
-        const decoded = verifyInternalToken(token);
-        if (!decoded) {
-            return NextResponse.json({ error: "Acceso denegado" }, { status: 403 });
-        }
-
-        const { eventoId, agenteId } = await request.json();
-
-        if (!eventoId || !agenteId) {
+        if (!agenteId) {
             return NextResponse.json(
-                { error: "eventoId y agenteId requeridos" },
+                { error: "agenteId requerido" },
                 { status: 400 }
             );
         }
 
-        const evento = await prisma.evento.findUnique({
-            where: { id: eventoId },
-            select: { estado: true },
-        });
+        const [evento, agente] = await Promise.all([
+            prisma.evento.findUnique({
+                where: { id: eventoId },
+                select: { estado: true },
+            }),
+            prisma.user.findUnique({
+                where: { id: agenteId },
+                select: { rol: true, activo: true },
+            }),
+        ]);
 
         if (!evento) {
-            return NextResponse.json({
-                success: false,
-                mensaje: "El evento no existe",
-            });
+            return NextResponse.json(
+                { error: "Evento no encontrado" },
+                { status: 404 }
+            );
+        }
+
+        if (!agente || agente.rol !== Rol.AGENT || !agente.activo) {
+            return NextResponse.json(
+                { error: "Agente no válido" },
+                { status: 400 }
+            );
         }
 
         if (!ESTADOS_UNIBLES.includes(evento.estado)) {
-            return NextResponse.json({
-                success: false,
-                mensaje: "El evento ya no admite agentes",
-            });
+            return NextResponse.json(
+                { error: "El evento ya no admite agentes" },
+                { status: 400 }
+            );
         }
 
         const eventoActualizado = await prisma.$transaction(async (tx) => {
@@ -72,12 +81,12 @@ export async function POST(request: NextRequest) {
                     accion: "ASSIGNED",
                     entidad: "Evento",
                     entidadId: eventoId,
-                    usuarioId: agenteId,
-                    detalle: { eventoId, agenteId },
+                    usuarioId: auth.user.sub,
+                    detalle: { eventoId, agenteId, porAdmin: true },
                 },
             });
 
-            await recalcularEstadoEvento(tx, eventoId, agenteId);
+            await recalcularEstadoEvento(tx, eventoId, auth.user.sub);
 
             return tx.evento.findUnique({
                 where: { id: eventoId },
@@ -88,9 +97,11 @@ export async function POST(request: NextRequest) {
             });
         });
 
+        await notifyEventoActualizado(eventoActualizado);
+
         return NextResponse.json({ success: true, evento: eventoActualizado });
     } catch (error) {
-        console.error("Error en asignación:", error);
+        console.error("Error al agregar agente:", error);
         return NextResponse.json(
             { error: "Error interno del servidor" },
             { status: 500 }

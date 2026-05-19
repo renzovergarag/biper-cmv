@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { EventoWithRelations } from "@/types";
 import { useSocket } from "@/hooks/useSocket";
-import { NivelUrgencia, EstadoEvento } from "@prisma/client";
+import { NivelUrgencia, EstadoAsignacion } from "@prisma/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,8 @@ interface Props {
     userId: string;
     socketUrl: string;
 }
+
+const ESTADOS_UNIBLES = ["PENDIENTE", "ASIGNADO", "EN_RUTA"];
 
 function formatCreatedAt(date: string | Date): string {
     const d = typeof date === "string" ? new Date(date) : date;
@@ -37,10 +39,34 @@ export default function AgentDashboardClient({
     const [pendientes, setPendientes] = useState<EventoWithRelations[]>([]);
     const { socket, connected } = useSocket(socketUrl);
 
+    const tieneAsignacionActiva = (e: EventoWithRelations) =>
+        e.asignaciones.some(
+            (a) => a.agenteId === userId && a.estado !== "ABANDONADO"
+        );
+
+    const miEstado = (e: EventoWithRelations): EstadoAsignacion | undefined =>
+        e.asignaciones.find((a) => a.agenteId === userId)?.estado;
+
+    const otrosActivos = (e: EventoWithRelations) =>
+        e.asignaciones.filter(
+            (a) => a.agenteId !== userId && a.estado !== "ABANDONADO"
+        ).length;
+
     useEffect(() => {
-        fetch("/api/events?estado=PENDIENTE")
-            .then((res) => res.json())
-            .then((data) => setPendientes(data.data || []))
+        // "Disponibles": eventos unibles donde el agente no participa.
+        Promise.all([
+            fetch("/api/events?estado=PENDIENTE").then((r) => r.json()),
+            fetch("/api/events?estado=ASIGNADO").then((r) => r.json()),
+            fetch("/api/events?estado=EN_RUTA").then((r) => r.json()),
+        ])
+            .then(([p, a, e]) => {
+                const todos: EventoWithRelations[] = [
+                    ...(p.data || []),
+                    ...(a.data || []),
+                    ...(e.data || []),
+                ];
+                setPendientes(todos.filter((ev) => !tieneAsignacionActiva(ev)));
+            })
             .catch(console.error);
     }, []);
 
@@ -57,16 +83,25 @@ export default function AgentDashboardClient({
             evento: EventoWithRelations;
         }) => {
             setEventos((prev) => {
-                const existe = prev.some((e) => e.id === evento.id);
-                if (existe) {
-                    return prev.map((e) => (e.id === evento.id ? evento : e));
+                if (tieneAsignacionActiva(evento)) {
+                    return prev.some((e) => e.id === evento.id)
+                        ? prev.map((e) => (e.id === evento.id ? evento : e))
+                        : [evento, ...prev];
                 }
-                if (evento.asignadoId === userId) {
-                    return [evento, ...prev];
-                }
-                return prev;
+                return prev.filter((e) => e.id !== evento.id);
             });
-            setPendientes((prev) => prev.filter((e) => e.id !== evento.id));
+
+            setPendientes((prev) => {
+                const mostrar =
+                    ESTADOS_UNIBLES.includes(evento.estado) &&
+                    !tieneAsignacionActiva(evento);
+                if (mostrar) {
+                    return prev.some((e) => e.id === evento.id)
+                        ? prev.map((e) => (e.id === evento.id ? evento : e))
+                        : [evento, ...prev];
+                }
+                return prev.filter((e) => e.id !== evento.id);
+            });
         };
 
         socket.on("evento:nuevo", handleNuevo);
@@ -76,7 +111,7 @@ export default function AgentDashboardClient({
             socket.off("evento:nuevo", handleNuevo);
             socket.off("evento:actualizado", handleActualizado);
         };
-    }, [socket]);
+    }, [socket, userId]);
 
     const handleAsignar = (eventoId: string) => {
         if (!socket) return;
@@ -149,11 +184,11 @@ export default function AgentDashboardClient({
                                     </p>
                                     <p className="text-xs text-muted-foreground mb-3">
                                         Por {evento.creador.nombre} · {formatCreatedAt(evento.createdAt)}
+                                        {otrosActivos(evento) > 0 &&
+                                            ` · ${otrosActivos(evento)} agente(s) en camino`}
                                     </p>
                                     <Button
-                                        onClick={() =>
-                                            handleAsignar(evento.id)
-                                        }
+                                        onClick={() => handleAsignar(evento.id)}
                                         className="w-full h-11 sm:h-9 text-sm"
                                     >
                                         Tomar caso
@@ -179,49 +214,52 @@ export default function AgentDashboardClient({
                     </Card>
                 ) : (
                     <div className="space-y-3">
-                        {eventos.map((evento) => (
-                            <Card key={evento.id}>
-                                <CardContent className="p-4">
-                                    <div className="flex justify-between items-start mb-2">
-                                        <h4 className="font-semibold text-foreground text-sm">
-                                            {evento.titulo}
-                                        </h4>
-                                        <Badge
-                                            variant={
-                                                urgenciaBadgeVariant[
+                        {eventos.map((evento) => {
+                            const estadoAgente = miEstado(evento);
+                            return (
+                                <Card key={evento.id}>
+                                    <CardContent className="p-4">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <h4 className="font-semibold text-foreground text-sm">
+                                                {evento.titulo}
+                                            </h4>
+                                            <Badge
+                                                variant={
+                                                    urgenciaBadgeVariant[
+                                                        evento.nivelUrgencia as NivelUrgencia
+                                                    ]
+                                                }
+                                            >
+                                                {urgenciaLabel[
                                                     evento.nivelUrgencia as NivelUrgencia
-                                                ]
-                                            }
-                                        >
-                                            {urgenciaLabel[
-                                                evento.nivelUrgencia as NivelUrgencia
-                                            ] || evento.nivelUrgencia}
-                                        </Badge>
-                                    </div>
-                                    <p className="text-sm text-muted-foreground mb-1">
-                                        <AddressLink
-                                            direccion={evento.direccionExacta}
-                                            coordenadas={evento.coordenadas as { lat: number; lng: number } | null | undefined}
-                                        />
-                                    </p>
-                                    <p className="text-xs text-muted-foreground mb-1">
-                                        Por {evento.creador.nombre} · {formatCreatedAt(evento.createdAt)}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground mb-3">
-                                        Estado:{" "}
-                                        <span className="font-medium text-foreground">
-                                            {evento.estado}
-                                        </span>
-                                    </p>
+                                                ] || evento.nivelUrgencia}
+                                            </Badge>
+                                        </div>
+                                        <p className="text-sm text-muted-foreground mb-1">
+                                            <AddressLink
+                                                direccion={evento.direccionExacta}
+                                                coordenadas={evento.coordenadas as { lat: number; lng: number } | null | undefined}
+                                            />
+                                        </p>
+                                        <p className="text-xs text-muted-foreground mb-1">
+                                            Por {evento.creador.nombre} · {formatCreatedAt(evento.createdAt)}
+                                            {otrosActivos(evento) > 0 &&
+                                                ` · Tú + ${otrosActivos(evento)} agente(s)`}
+                                        </p>
+                                        <p className="text-xs text-muted-foreground mb-3">
+                                            Mi estado:{" "}
+                                            <span className="font-medium text-foreground">
+                                                {estadoAgente}
+                                            </span>
+                                        </p>
 
-                                    {evento.estado ===
-                                        EstadoEvento.ASIGNADO &&
-                                        evento.asignadoId === userId && (
+                                        {estadoAgente ===
+                                            EstadoAsignacion.ASIGNADO && (
                                             <Button
                                                 onClick={() =>
                                                     handleCambiarEstado(
                                                         evento.id,
-                                                        EstadoEvento.EN_RUTA
+                                                        EstadoAsignacion.EN_RUTA
                                                     )
                                                 }
                                                 variant="default"
@@ -231,15 +269,14 @@ export default function AgentDashboardClient({
                                             </Button>
                                         )}
 
-                                    {evento.estado ===
-                                        EstadoEvento.EN_RUTA &&
-                                        evento.asignadoId === userId && (
+                                        {estadoAgente ===
+                                            EstadoAsignacion.EN_RUTA && (
                                             <div className="grid grid-cols-2 gap-2">
                                                 <Button
                                                     onClick={() =>
                                                         handleCambiarEstado(
                                                             evento.id,
-                                                            EstadoEvento.RESUELTO
+                                                            EstadoAsignacion.RESUELTO
                                                         )
                                                     }
                                                     className="w-full h-11 sm:h-9 text-sm bg-green-600 hover:bg-green-700"
@@ -250,19 +287,20 @@ export default function AgentDashboardClient({
                                                     onClick={() =>
                                                         handleCambiarEstado(
                                                             evento.id,
-                                                            EstadoEvento.CANCELADO
+                                                            EstadoAsignacion.ABANDONADO
                                                         )
                                                     }
                                                     variant="destructive"
                                                     className="w-full h-11 sm:h-9 text-sm"
                                                 >
-                                                    Cancelar
+                                                    Abandonar
                                                 </Button>
                                             </div>
                                         )}
-                                </CardContent>
-                            </Card>
-                        ))}
+                                    </CardContent>
+                                </Card>
+                            );
+                        })}
                     </div>
                 )}
             </div>

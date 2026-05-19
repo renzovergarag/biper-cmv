@@ -14,9 +14,13 @@ export default async function AgentDashboardPage() {
     if (!decoded || decoded.rol !== "AGENT") redirect("/dashboard");
 
     const eventos = await prisma.evento.findMany({
-        where: { asignadoId: decoded.sub },
+        where: {
+            asignaciones: {
+                some: { agenteId: decoded.sub, estado: { not: "ABANDONADO" } },
+            },
+        },
         orderBy: { createdAt: "desc" },
-        include: { creador: true, asignado: true },
+        include: { creador: true, asignaciones: { include: { agente: true } } },
     });
 
     return (

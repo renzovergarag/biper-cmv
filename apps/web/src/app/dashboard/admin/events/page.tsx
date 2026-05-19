@@ -21,7 +21,7 @@ export default async function AdminEventsPage() {
 
     const eventos = await prisma.evento.findMany({
         orderBy: { createdAt: "desc" },
-        include: { creador: true, asignado: true },
+        include: { creador: true, asignaciones: { include: { agente: true } } },
     });
 
     const socketUrl =

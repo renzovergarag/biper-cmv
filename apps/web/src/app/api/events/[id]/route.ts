@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { EstadoEvento } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
+import { requireAdmin } from "@/lib/api-auth";
+import { notifyEventoActualizado } from "@/lib/socket-notify";
 
 export async function GET(
     request: NextRequest,
@@ -23,7 +26,7 @@ export async function GET(
             where: { id },
             include: {
                 creador: true,
-                asignado: true,
+                asignaciones: { include: { agente: true } },
                 estadosHistorial: {
                     include: { usuario: true },
                     orderBy: { timestamp: "asc" },
@@ -41,6 +44,95 @@ export async function GET(
         return NextResponse.json({ evento });
     } catch (error) {
         console.error("Error obteniendo evento:", error);
+        return NextResponse.json(
+            { error: "Error interno del servidor" },
+            { status: 500 }
+        );
+    }
+}
+
+export async function PATCH(
+    request: NextRequest,
+    { params }: { params: { id: string } }
+) {
+    const auth = await requireAdmin(request);
+    if (!auth.ok) return auth.response;
+
+    try {
+        const eventoId = params.id;
+        const { estado } = await request.json();
+
+        if (estado !== EstadoEvento.CANCELADO) {
+            return NextResponse.json(
+                { error: "Solo se permite cancelar el evento" },
+                { status: 400 }
+            );
+        }
+
+        const actual = await prisma.evento.findUnique({
+            where: { id: eventoId },
+            select: { estado: true },
+        });
+
+        if (!actual) {
+            return NextResponse.json(
+                { error: "Evento no encontrado" },
+                { status: 404 }
+            );
+        }
+
+        if (
+            actual.estado === EstadoEvento.RESUELTO ||
+            actual.estado === EstadoEvento.CANCELADO
+        ) {
+            return NextResponse.json(
+                { error: "El evento ya está finalizado" },
+                { status: 400 }
+            );
+        }
+
+        const eventoActualizado = await prisma.$transaction(async (tx) => {
+            await tx.evento.update({
+                where: { id: eventoId },
+                data: { estado: EstadoEvento.CANCELADO },
+            });
+
+            await tx.estadoHistorial.create({
+                data: {
+                    eventoId,
+                    estado: EstadoEvento.CANCELADO,
+                    usuarioId: auth.user.sub,
+                },
+            });
+
+            await tx.logAuditoria.create({
+                data: {
+                    accion: "STATUS_CHANGED",
+                    entidad: "Evento",
+                    entidadId: eventoId,
+                    usuarioId: auth.user.sub,
+                    detalle: {
+                        estadoAnterior: actual.estado,
+                        nuevoEstado: EstadoEvento.CANCELADO,
+                        porAdmin: true,
+                    },
+                },
+            });
+
+            return tx.evento.findUnique({
+                where: { id: eventoId },
+                include: {
+                    creador: true,
+                    asignaciones: { include: { agente: true } },
+                },
+            });
+        });
+
+        await notifyEventoActualizado(eventoActualizado);
+
+        return NextResponse.json({ success: true, evento: eventoActualizado });
+    } catch (error) {
+        console.error("Error al cancelar evento:", error);
         return NextResponse.json(
             { error: "Error interno del servidor" },
             { status: 500 }

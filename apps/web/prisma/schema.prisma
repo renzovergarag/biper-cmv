@@ -29,6 +29,13 @@ enum EstadoEvento {
   CANCELADO
 }
 
+enum EstadoAsignacion {
+  ASIGNADO
+  EN_RUTA
+  RESUELTO
+  ABANDONADO
+}
+
 model User {
   id               String   @id @default(auto()) @map("_id") @db.ObjectId
   email            String   @unique
@@ -40,7 +47,7 @@ model User {
   updatedAt        DateTime @updatedAt
 
   eventosCreados   Evento[] @relation("Creador")
-  eventosAsignados Evento[] @relation("Asignado")
+  asignaciones     AsignacionEvento[] @relation("AgenteAsignaciones")
   logs             LogAuditoria[]
   historialEstado  EstadoHistorial[]
 }
@@ -58,8 +65,7 @@ model Evento {
   creadorId        String        @db.ObjectId
   creador          User          @relation("Creador", fields: [creadorId], references: [id])
 
-  asignadoId       String?       @db.ObjectId
-  asignado         User?         @relation("Asignado", fields: [asignadoId], references: [id])
+  asignaciones     AsignacionEvento[]
 
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
@@ -71,7 +77,6 @@ model Evento {
 
   @@index([estado])
   @@index([creadorId])
-  @@index([asignadoId])
   @@index([nivelUrgencia])
   @@index([createdAt])
 }
@@ -105,4 +110,21 @@ model LogAuditoria {
   @@index([timestamp])
   @@index([accion])
   @@index([eventoId])
+}
+
+model AsignacionEvento {
+  id         String           @id @default(auto()) @map("_id") @db.ObjectId
+  eventoId   String           @db.ObjectId
+  evento     Evento           @relation(fields: [eventoId], references: [id])
+  agenteId   String           @db.ObjectId
+  agente     User             @relation("AgenteAsignaciones", fields: [agenteId], references: [id])
+  estado     EstadoAsignacion @default(ASIGNADO)
+  assignedAt DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  resolvedAt DateTime?
+
+  @@unique([eventoId, agenteId])
+  @@index([agenteId])
+  @@index([eventoId])
+  @@index([estado])
 }

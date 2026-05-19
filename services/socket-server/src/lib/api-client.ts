@@ -80,11 +80,11 @@ export async function asignarEventoAtomico(
 export async function actualizarEstadoEvento(
   eventoId: string,
   nuevoEstado: string,
-  usuarioId: string
+  agenteId: string
 ) {
   return callNextAPI<{ evento: unknown; success: boolean }>(
     "/api/internal/update-status",
     "PATCH",
-    { eventoId, nuevoEstado, usuarioId }
+    { eventoId, nuevoEstado, agenteId }
   );
 }

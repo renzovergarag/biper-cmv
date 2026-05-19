@@ -61,10 +61,7 @@ export async function GET(request: NextRequest) {
                     where: { createdAt: { gte: startOfToday } },
                 }),
                 prisma.evento.count({
-                    where: {
-                        estado: EstadoEvento.PENDIENTE,
-                        asignadoId: null,
-                    },
+                    where: { estado: EstadoEvento.PENDIENTE },
                 }),
                 prisma.evento.count({
                     where: {
