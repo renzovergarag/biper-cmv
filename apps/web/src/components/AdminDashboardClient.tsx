@@ -103,6 +103,7 @@ export default function AdminDashboardClient({
                 open={modalOpen}
                 onOpenChange={handleModalOpenChange}
                 refreshVersion={refreshVersion}
+                isAdmin
             />
         </div>
     );

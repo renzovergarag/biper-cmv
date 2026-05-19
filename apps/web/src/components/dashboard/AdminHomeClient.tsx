@@ -127,6 +127,7 @@ export default function AdminHomeClient({
                 open={modalOpen}
                 onOpenChange={handleModalOpenChange}
                 refreshVersion={0}
+                isAdmin
             />
         </div>
     );
