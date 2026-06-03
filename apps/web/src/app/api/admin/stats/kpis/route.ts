@@ -69,6 +69,7 @@ export async function GET(request: NextRequest) {
                             in: [
                                 EstadoEvento.ASIGNADO,
                                 EstadoEvento.EN_RUTA,
+                                EstadoEvento.EN_EL_LUGAR,
                             ],
                         },
                     },

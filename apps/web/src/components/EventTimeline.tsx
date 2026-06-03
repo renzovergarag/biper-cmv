@@ -30,6 +30,7 @@ const estadoDotColor: Record<EstadoEvento, string> = {
     [EstadoEvento.PENDIENTE]: "bg-gray-400",
     [EstadoEvento.ASIGNADO]: "bg-gray-500",
     [EstadoEvento.EN_RUTA]: "bg-amber-500",
+    [EstadoEvento.EN_EL_LUGAR]: "bg-emerald-500",
     [EstadoEvento.RESUELTO]: "bg-blue-500",
     [EstadoEvento.CANCELADO]: "bg-red-500",
 };
@@ -38,6 +39,7 @@ const estadoCardBg: Record<EstadoEvento, string> = {
     [EstadoEvento.PENDIENTE]: "bg-gray-50 border-gray-200",
     [EstadoEvento.ASIGNADO]: "bg-gray-100 border-gray-300",
     [EstadoEvento.EN_RUTA]: "bg-amber-50 border-amber-200",
+    [EstadoEvento.EN_EL_LUGAR]: "bg-emerald-50 border-emerald-200",
     [EstadoEvento.RESUELTO]: "bg-blue-50 border-blue-200",
     [EstadoEvento.CANCELADO]: "bg-red-50 border-red-200",
 };

@@ -19,6 +19,10 @@ export function derivarEstadoEvento(
         return EstadoEvento.RESUELTO;
     }
 
+    if (activas.some((a) => a.estado === EstadoAsignacion.EN_EL_LUGAR)) {
+        return EstadoEvento.EN_EL_LUGAR;
+    }
+
     if (
         activas.some(
             (a) =>

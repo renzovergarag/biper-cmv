@@ -6,17 +6,21 @@ import { recalcularEstadoEvento } from "@/lib/asignaciones";
 
 const ESTADOS_VALIDOS: EstadoAsignacion[] = [
     EstadoAsignacion.EN_RUTA,
+    EstadoAsignacion.EN_EL_LUGAR,
     EstadoAsignacion.RESUELTO,
     EstadoAsignacion.ABANDONADO,
 ];
 
-// Transiciones permitidas por agente: estadoActual -> estados destino válidos
 const TRANSICIONES: Record<EstadoAsignacion, EstadoAsignacion[]> = {
     [EstadoAsignacion.ASIGNADO]: [
         EstadoAsignacion.EN_RUTA,
         EstadoAsignacion.ABANDONADO,
     ],
     [EstadoAsignacion.EN_RUTA]: [
+        EstadoAsignacion.EN_EL_LUGAR,
+        EstadoAsignacion.ABANDONADO,
+    ],
+    [EstadoAsignacion.EN_EL_LUGAR]: [
         EstadoAsignacion.RESUELTO,
         EstadoAsignacion.ABANDONADO,
     ],

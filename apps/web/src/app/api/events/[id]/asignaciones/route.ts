@@ -9,6 +9,7 @@ const ESTADOS_UNIBLES: EstadoEvento[] = [
     EstadoEvento.PENDIENTE,
     EstadoEvento.ASIGNADO,
     EstadoEvento.EN_RUTA,
+    EstadoEvento.EN_EL_LUGAR,
 ];
 
 export async function POST(

@@ -106,7 +106,11 @@ export default async function AdminDashboardPage() {
         prisma.evento.count({
             where: {
                 estado: {
-                    in: [EstadoEvento.ASIGNADO, EstadoEvento.EN_RUTA],
+                    in: [
+                        EstadoEvento.ASIGNADO,
+                        EstadoEvento.EN_RUTA,
+                        EstadoEvento.EN_EL_LUGAR,
+                    ],
                 },
             },
         }),
