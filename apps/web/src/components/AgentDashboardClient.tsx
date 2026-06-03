@@ -17,7 +17,7 @@ interface Props {
     socketUrl: string;
 }
 
-const ESTADOS_UNIBLES = ["PENDIENTE", "ASIGNADO", "EN_RUTA"];
+const ESTADOS_UNIBLES = ["PENDIENTE", "ASIGNADO", "EN_RUTA", "EN_EL_LUGAR"];
 
 function formatCreatedAt(date: string | Date): string {
     const d = typeof date === "string" ? new Date(date) : date;
@@ -58,12 +58,14 @@ export default function AgentDashboardClient({
             fetch("/api/events?estado=PENDIENTE").then((r) => r.json()),
             fetch("/api/events?estado=ASIGNADO").then((r) => r.json()),
             fetch("/api/events?estado=EN_RUTA").then((r) => r.json()),
+            fetch("/api/events?estado=EN_EL_LUGAR").then((r) => r.json()),
         ])
-            .then(([p, a, e]) => {
+            .then(([p, a, e, l]) => {
                 const todos: EventoWithRelations[] = [
                     ...(p.data || []),
                     ...(a.data || []),
                     ...(e.data || []),
+                    ...(l.data || []),
                 ];
                 setPendientes(todos.filter((ev) => !tieneAsignacionActiva(ev)));
             })
@@ -271,6 +273,35 @@ export default function AgentDashboardClient({
 
                                         {estadoAgente ===
                                             EstadoAsignacion.EN_RUTA && (
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <Button
+                                                    onClick={() =>
+                                                        handleCambiarEstado(
+                                                            evento.id,
+                                                            EstadoAsignacion.EN_EL_LUGAR
+                                                        )
+                                                    }
+                                                    className="w-full h-11 sm:h-9 text-sm bg-green-600 hover:bg-green-700"
+                                                >
+                                                    Llegué al lugar
+                                                </Button>
+                                                <Button
+                                                    onClick={() =>
+                                                        handleCambiarEstado(
+                                                            evento.id,
+                                                            EstadoAsignacion.ABANDONADO
+                                                        )
+                                                    }
+                                                    variant="destructive"
+                                                    className="w-full h-11 sm:h-9 text-sm"
+                                                >
+                                                    Abandonar
+                                                </Button>
+                                            </div>
+                                        )}
+
+                                        {estadoAgente ===
+                                            EstadoAsignacion.EN_EL_LUGAR && (
                                             <div className="grid grid-cols-2 gap-2">
                                                 <Button
                                                     onClick={() =>

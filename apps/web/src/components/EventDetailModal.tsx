@@ -50,7 +50,7 @@ interface EventDetailModalProps {
     isAdmin?: boolean;
 }
 
-const ESTADOS_UNIBLES: string[] = ["PENDIENTE", "ASIGNADO", "EN_RUTA"];
+const ESTADOS_UNIBLES: string[] = ["PENDIENTE", "ASIGNADO", "EN_RUTA", "EN_EL_LUGAR"];
 
 export default function EventDetailModal({
     eventoId,
