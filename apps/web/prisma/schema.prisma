@@ -25,6 +25,7 @@ enum EstadoEvento {
   PENDIENTE
   ASIGNADO
   EN_RUTA
+  EN_EL_LUGAR
   RESUELTO
   CANCELADO
 }
@@ -32,6 +33,7 @@ enum EstadoEvento {
 enum EstadoAsignacion {
   ASIGNADO
   EN_RUTA
+  EN_EL_LUGAR
   RESUELTO
   ABANDONADO
 }
