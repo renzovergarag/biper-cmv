@@ -41,4 +41,22 @@ assert.equal(
     E.PENDIENTE
 );
 
+// Mezcla EN_RUTA + EN_EL_LUGAR -> EN_EL_LUGAR
+assert.equal(
+    derivarEstadoEvento([{ estado: A.EN_RUTA }, { estado: A.EN_EL_LUGAR }]),
+    E.EN_EL_LUGAR
+);
+
+// Mezcla RESUELTO + EN_EL_LUGAR -> EN_EL_LUGAR
+assert.equal(
+    derivarEstadoEvento([{ estado: A.RESUELTO }, { estado: A.EN_EL_LUGAR }]),
+    E.EN_EL_LUGAR
+);
+
+// Mezcla ASIGNADO + EN_EL_LUGAR -> EN_EL_LUGAR
+assert.equal(
+    derivarEstadoEvento([{ estado: A.ASIGNADO }, { estado: A.EN_EL_LUGAR }]),
+    E.EN_EL_LUGAR
+);
+
 console.log("✓ derivarEstadoEvento: todos los casos pasaron");
