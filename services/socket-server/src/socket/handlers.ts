@@ -7,7 +7,7 @@ import {
     listAgents,
 } from "./agents-state.js";
 
-const ESTADOS_VALIDOS = ["EN_RUTA", "RESUELTO", "ABANDONADO"] as const;
+const ESTADOS_VALIDOS = ["EN_RUTA", "EN_EL_LUGAR", "RESUELTO", "ABANDONADO"] as const;
 
 async function registrarSesion(
     usuarioId: string,
