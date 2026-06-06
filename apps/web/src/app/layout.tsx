@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/providers/AuthProvider";
@@ -9,6 +9,20 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
     title: "VIPER CMV - Gestión de Eventos",
     description: "Sistema de despacho y gestión de eventos territoriales",
+    manifest: "/manifest.json",
+    appleWebApp: {
+        capable: true,
+        title: "VIPER CMV",
+        statusBarStyle: "black-translucent",
+    },
+    icons: {
+        icon: "/icons/icon-192.png",
+        apple: "/icons/icon-192.png",
+    },
+};
+
+export const viewport: Viewport = {
+    themeColor: "#0f172a",
 };
 
 export default function RootLayout({

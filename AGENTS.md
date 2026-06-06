@@ -69,3 +69,12 @@ Se necesitan archivos `.env` en **tres ubicaciones**:
 - No usar tabulaciones (`\t`).
 - Preferir `const` sobre `let`. No usar `var`.
 - El proyecto está en español: modelos Prisma, enums, rutas y mensajes usan español.
+
+## Notificaciones Push (PWA)
+
+- Web Push con VAPID auto-hospedado (librería `web-push` en `apps/web`).
+- Variables: `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, `NEXT_PUBLIC_VAPID_PUBLIC_KEY` (en `apps/web/.env` y raíz). Generar con `npx web-push generate-vapid-keys`.
+- El envío se hace en `POST /api/events` (fire-and-forget) leyendo `SuscripcionPush`.
+- Service worker en `apps/web/public/sw.js`; manifest en `apps/web/public/manifest.json`.
+- Probar: `npm run test:push` (desde `apps/web`).
+- iPhone requiere la PWA instalada ("Agregar a inicio") + iOS 16.4+.

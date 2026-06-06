@@ -9,3 +9,5 @@ coverage/
 *.tsbuildinfo
 mongo-keyfile
 .superpowers/
+.antigravitycli/
+.vscode/

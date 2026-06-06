@@ -52,6 +52,7 @@ model User {
   asignaciones     AsignacionEvento[] @relation("AgenteAsignaciones")
   logs             LogAuditoria[]
   historialEstado  EstadoHistorial[]
+  suscripcionesPush SuscripcionPush[] @relation("SuscripcionesPush")
 }
 
 model Evento {
@@ -129,4 +130,16 @@ model AsignacionEvento {
   @@index([agenteId])
   @@index([eventoId])
   @@index([estado])
+}
+
+model SuscripcionPush {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation("SuscripcionesPush", fields: [userId], references: [id])
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

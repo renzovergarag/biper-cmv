@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { urgenciaBadgeVariant, urgenciaLabel } from "@/lib/theme";
 import EventNotification from "@/components/EventNotification";
+import PushNotificationsBanner from "@/components/PushNotificationsBanner";
 import { AddressLink } from "./AddressLink";
 
 interface Props {
@@ -127,6 +128,7 @@ export default function AgentDashboardClient({
 
     return (
         <div className="mx-auto max-w-md px-4 py-6">
+            <PushNotificationsBanner />
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold text-foreground">
                     Panel de Agente

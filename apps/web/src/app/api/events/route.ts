@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { enviarPushASuscripciones } from "@/lib/push";
 import { verifyToken, generateInternalToken } from "@/lib/auth";
 import { z } from "zod";
 import { Prisma, NivelUrgencia, EstadoEvento, Rol } from "@prisma/client";
@@ -144,6 +145,33 @@ export async function POST(request: NextRequest) {
         } catch (socketError) {
             console.error("Error notificando al socket server:", socketError);
         }
+
+        // Fan-out de notificaciones push (fire-and-forget; no debe bloquear ni
+        // hacer fallar la creación del evento).
+        void (async () => {
+            try {
+                const suscripciones = await prisma.suscripcionPush.findMany();
+                const muertos = await enviarPushASuscripciones(
+                    suscripciones.map((s) => ({
+                        endpoint: s.endpoint,
+                        p256dh: s.p256dh,
+                        auth: s.auth,
+                    })),
+                    {
+                        id: evento.id,
+                        titulo: evento.titulo,
+                        direccionExacta: evento.direccionExacta,
+                    }
+                );
+                if (muertos.length > 0) {
+                    await prisma.suscripcionPush.deleteMany({
+                        where: { endpoint: { in: muertos } },
+                    });
+                }
+            } catch (pushError) {
+                console.error("Error en fan-out push:", pushError);
+            }
+        })();
 
         return NextResponse.json({ success: true, evento }, { status: 201 });
     } catch (error) {
