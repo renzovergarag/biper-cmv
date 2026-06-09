@@ -20,6 +20,10 @@ jobs:
                   NEXT_PUBLIC_APP_URL="${{ secrets.NEXT_PUBLIC_APP_URL }}"
                   SOCKET_SERVER_URL="${{ secrets.SOCKET_SERVER_URL }}"
                   SOCKET_SERVER_INTERNAL_URL="http://localhost:4000"
+                  VAPID_PUBLIC_KEY="${{ secrets.VAPID_PUBLIC_KEY }}"
+                  VAPID_PRIVATE_KEY="${{ secrets.VAPID_PRIVATE_KEY }}"
+                  VAPID_SUBJECT="${{ secrets.VAPID_SUBJECT }}"
+                  NEXT_PUBLIC_VAPID_PUBLIC_KEY="${{ secrets.NEXT_PUBLIC_VAPID_PUBLIC_KEY }}"
                   EOF
 
                   # Web .env
@@ -32,6 +36,10 @@ jobs:
                   NEXT_PUBLIC_SOCKET_URL="${{ secrets.NEXT_PUBLIC_SOCKET_URL }}"
                   SOCKET_SERVER_INTERNAL_URL="http://localhost:4000"
                   GOOGLE_PLACES_API_KEY="${{ secrets.GOOGLE_PLACES_API_KEY }}"
+                  VAPID_PUBLIC_KEY="${{ secrets.VAPID_PUBLIC_KEY }}"
+                  VAPID_PRIVATE_KEY="${{ secrets.VAPID_PRIVATE_KEY }}"
+                  VAPID_SUBJECT="${{ secrets.VAPID_SUBJECT }}"
+                  NEXT_PUBLIC_VAPID_PUBLIC_KEY="${{ secrets.NEXT_PUBLIC_VAPID_PUBLIC_KEY }}"
                   EOF
 
                   # Socket .env
