@@ -16,7 +16,7 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  if (decoded.rol === "ADMIN") {
+  if (decoded.rol === "ADMIN" || decoded.rol === "SUPERADMIN") {
     redirect("/dashboard/admin");
   }
 

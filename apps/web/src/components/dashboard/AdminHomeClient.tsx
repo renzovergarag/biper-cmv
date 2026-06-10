@@ -75,18 +75,25 @@ export default function AdminHomeClient({
             scheduleRefetch();
         };
 
+        const handleEliminado = ({ id }: { id: string }) => {
+            setRecent((prev) => prev.filter((e) => e.id !== id));
+            scheduleRefetch();
+        };
+
         const handleAgentesCambio = () => {
             scheduleRefetch();
         };
 
         socket.on("evento:nuevo", handleNuevo);
         socket.on("evento:actualizado", handleActualizado);
+        socket.on("evento:eliminado", handleEliminado);
         socket.on("agentes:conectado", handleAgentesCambio);
         socket.on("agentes:desconectado", handleAgentesCambio);
 
         return () => {
             socket.off("evento:nuevo", handleNuevo);
             socket.off("evento:actualizado", handleActualizado);
+            socket.off("evento:eliminado", handleEliminado);
             socket.off("agentes:conectado", handleAgentesCambio);
             socket.off("agentes:desconectado", handleAgentesCambio);
             if (refetchTimer.current) clearTimeout(refetchTimer.current);

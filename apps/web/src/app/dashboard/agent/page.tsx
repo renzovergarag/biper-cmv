@@ -15,6 +15,7 @@ export default async function AgentDashboardPage() {
 
     const eventos = await prisma.evento.findMany({
         where: {
+            eliminadoAt: null,
             asignaciones: {
                 some: { agenteId: decoded.sub, estado: { not: "ABANDONADO" } },
             },

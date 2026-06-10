@@ -151,7 +151,8 @@ export default function UsersPageClient({
                                         <TableCell>
                                             <Badge
                                                 variant={
-                                                    usuario.rol === "ADMIN"
+                                                    usuario.rol === "ADMIN" ||
+                                                    usuario.rol === "SUPERADMIN"
                                                         ? "default"
                                                         : "secondary"
                                                 }
@@ -234,7 +235,8 @@ export default function UsersPageClient({
                                     </span>
                                     <Badge
                                         variant={
-                                            usuario.rol === "ADMIN"
+                                            usuario.rol === "ADMIN" ||
+                                            usuario.rol === "SUPERADMIN"
                                                 ? "default"
                                                 : "secondary"
                                         }

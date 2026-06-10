@@ -22,10 +22,9 @@ export default function AppSidebar() {
 
     if (isLoading || !user) return null;
 
-    const items =
-        user.rol === "ADMIN" ? navConfig.admin : navConfig.agent;
-    const homeHref =
-        user.rol === "ADMIN" ? "/dashboard/admin" : "/dashboard/agent";
+    const isAdminLike = user.rol === "ADMIN" || user.rol === "SUPERADMIN";
+    const items = isAdminLike ? navConfig.admin : navConfig.agent;
+    const homeHref = isAdminLike ? "/dashboard/admin" : "/dashboard/agent";
 
     return (
         <Sidebar collapsible="icon">

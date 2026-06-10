@@ -74,10 +74,10 @@ export async function PATCH(
 
         const actual = await prisma.evento.findUnique({
             where: { id: eventoId },
-            select: { estado: true },
+            select: { estado: true, eliminadoAt: true },
         });
 
-        if (!actual) {
+        if (!actual || actual.eliminadoAt) {
             return NextResponse.json(
                 { error: "Evento no encontrado" },
                 { status: 404 }

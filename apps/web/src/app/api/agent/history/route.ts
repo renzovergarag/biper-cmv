@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
     try {
         const eventos = await prisma.evento.findMany({
             where: {
+                eliminadoAt: null,
                 asignaciones: {
                     some: {
                         agenteId: auth.user.sub,
