@@ -114,8 +114,17 @@ export async function PATCH(
         if (body.rol !== undefined) {
             if (!Object.values(Rol).includes(body.rol)) {
                 return NextResponse.json(
-                    { error: "Rol inválido. Use ADMIN o AGENT" },
+                    { error: "Rol inválido. Use ADMIN, AGENT o SUPERADMIN" },
                     { status: 400 }
+                );
+            }
+
+            if (body.rol === Rol.SUPERADMIN && admin.rol !== Rol.SUPERADMIN) {
+                return NextResponse.json(
+                    {
+                        error: "Solo un superadmin puede asignar el rol SUPERADMIN",
+                    },
+                    { status: 403 }
                 );
             }
 

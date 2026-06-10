@@ -28,6 +28,7 @@ interface UserFormModalProps {
     onClose: () => void;
     onSave: () => void;
     usuario?: UserListItem | null;
+    isSuperAdmin?: boolean;
 }
 
 export default function UserFormModal({
@@ -35,6 +36,7 @@ export default function UserFormModal({
     onClose,
     onSave,
     usuario,
+    isSuperAdmin = false,
 }: UserFormModalProps) {
     const [nombre, setNombre] = useState("");
     const [email, setEmail] = useState("");
@@ -162,6 +164,11 @@ export default function UserFormModal({
                     <SelectContent>
                         <SelectItem value="AGENT">Agente</SelectItem>
                         <SelectItem value="ADMIN">Admin</SelectItem>
+                        {isSuperAdmin && (
+                            <SelectItem value="SUPERADMIN">
+                                Superadmin
+                            </SelectItem>
+                        )}
                     </SelectContent>
                 </Select>
             </div>

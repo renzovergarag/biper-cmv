@@ -17,5 +17,5 @@ export default async function AdminUsersPage() {
     )
         redirect("/dashboard");
 
-    return <UsersPageClient />;
+    return <UsersPageClient isSuperAdmin={decoded.rol === Rol.SUPERADMIN} />;
 }
