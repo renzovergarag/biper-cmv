@@ -35,6 +35,7 @@ export default async function AdminEventsPage() {
         <AdminDashboardClient
             initialEventos={eventos}
             socketUrl={socketUrl}
+            isSuperAdmin={decoded.rol === Rol.SUPERADMIN}
         />
     );
 }

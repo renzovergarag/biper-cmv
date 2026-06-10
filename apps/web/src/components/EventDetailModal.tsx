@@ -20,6 +20,17 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { X } from "lucide-react";
 import {
     urgenciaBadgeVariant,
@@ -48,6 +59,7 @@ interface EventDetailModalProps {
     onOpenChange: (open: boolean) => void;
     refreshVersion: number;
     isAdmin?: boolean;
+    isSuperAdmin?: boolean;
 }
 
 const ESTADOS_UNIBLES: string[] = ["PENDIENTE", "ASIGNADO", "EN_RUTA", "EN_EL_LUGAR"];
@@ -58,6 +70,7 @@ export default function EventDetailModal({
     onOpenChange,
     refreshVersion,
     isAdmin = false,
+    isSuperAdmin = false,
 }: EventDetailModalProps) {
     const [evento, setEvento] = useState<EventoWithHistorial | null>(null);
     const [loading, setLoading] = useState(false);
@@ -176,6 +189,26 @@ export default function EventDetailModal({
             refetch();
         } catch (err) {
             toast.error(err instanceof Error ? err.message : "Error al cancelar");
+        } finally {
+            setAccionLoading(false);
+        }
+    };
+
+    const eliminarEvento = async () => {
+        if (!eventoId) return;
+        setAccionLoading(true);
+        try {
+            const res = await fetch(`/api/events/${eventoId}`, {
+                method: "DELETE",
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.error || "Error");
+            toast.success("Evento eliminado");
+            onOpenChange(false);
+        } catch (err) {
+            toast.error(
+                err instanceof Error ? err.message : "Error al eliminar"
+            );
         } finally {
             setAccionLoading(false);
         }
@@ -346,6 +379,45 @@ export default function EventDetailModal({
                                 >
                                     Cancelar evento
                                 </Button>
+                            )}
+
+                            {isSuperAdmin && (
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button
+                                            variant="destructive"
+                                            className="w-full mt-2"
+                                            disabled={accionLoading}
+                                        >
+                                            Eliminar evento
+                                        </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>
+                                                ¿Eliminar este evento?
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                El evento se ocultará de todas
+                                                las vistas de forma permanente.
+                                                La acción queda registrada en la
+                                                auditoría y no se puede deshacer
+                                                desde la interfaz.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>
+                                                Cancelar
+                                            </AlertDialogCancel>
+                                            <AlertDialogAction
+                                                onClick={eliminarEvento}
+                                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                            >
+                                                Eliminar
+                                            </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
                             )}
                         </div>
 

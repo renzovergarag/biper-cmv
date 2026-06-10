@@ -11,11 +11,13 @@ import EventDetailModal from "./EventDetailModal";
 interface AdminDashboardClientProps {
     initialEventos: EventoWithRelations[];
     socketUrl: string;
+    isSuperAdmin?: boolean;
 }
 
 export default function AdminDashboardClient({
     initialEventos,
     socketUrl,
+    isSuperAdmin = false,
 }: AdminDashboardClientProps) {
     const [eventos, setEventos] =
         useState<EventoWithRelations[]>(initialEventos);
@@ -114,6 +116,7 @@ export default function AdminDashboardClient({
                 onOpenChange={handleModalOpenChange}
                 refreshVersion={refreshVersion}
                 isAdmin
+                isSuperAdmin={isSuperAdmin}
             />
         </div>
     );
