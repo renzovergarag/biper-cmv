@@ -15,7 +15,10 @@ export default async function AdminEventsPage() {
 
     const decoded = await verifyToken(token);
 
-    if (!decoded || decoded.rol !== Rol.ADMIN) {
+    if (
+        !decoded ||
+        (decoded.rol !== Rol.ADMIN && decoded.rol !== Rol.SUPERADMIN)
+    ) {
         redirect("/dashboard/agent");
     }
 

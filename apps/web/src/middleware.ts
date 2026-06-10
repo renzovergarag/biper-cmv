@@ -17,7 +17,11 @@ export async function middleware(request: NextRequest) {
 
     const pathname = request.nextUrl.pathname;
 
-    if (pathname.startsWith("/dashboard/admin") && decoded.rol !== Rol.ADMIN) {
+    if (
+        pathname.startsWith("/dashboard/admin") &&
+        decoded.rol !== Rol.ADMIN &&
+        decoded.rol !== Rol.SUPERADMIN
+    ) {
         return NextResponse.redirect(new URL("/dashboard/agent", request.url));
     }
 
@@ -25,7 +29,11 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL("/dashboard/admin", request.url));
     }
 
-    if (pathname.startsWith("/api/admin") && decoded.rol !== Rol.ADMIN) {
+    if (
+        pathname.startsWith("/api/admin") &&
+        decoded.rol !== Rol.ADMIN &&
+        decoded.rol !== Rol.SUPERADMIN
+    ) {
         return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
 
