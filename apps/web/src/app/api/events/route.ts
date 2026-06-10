@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
         const page = parseInt(searchParams.get("page") || "1", 10);
         const limit = parseInt(searchParams.get("limit") || "10", 10);
 
-        const where: Prisma.EventoWhereInput = {};
+        const where: Prisma.EventoWhereInput = { eliminadoAt: null };
         if (estado) where.estado = estado;
         if (nivelUrgencia) where.nivelUrgencia = nivelUrgencia;
         if (agenteIdFilter) {
