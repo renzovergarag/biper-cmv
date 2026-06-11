@@ -56,7 +56,7 @@ async function fetchChartData(days: number) {
     const since = startOfDayUTC(new Date());
     since.setUTCDate(since.getUTCDate() - (days - 1));
     const eventos = await prisma.evento.findMany({
-        where: { createdAt: { gte: since } },
+        where: { createdAt: { gte: since }, eliminadoAt: { isSet: false } },
         select: { createdAt: true },
     });
 
@@ -82,7 +82,7 @@ export default async function AdminDashboardPage() {
     if (!token) redirect("/login");
 
     const decoded = await verifyToken(token);
-    if (!decoded || decoded.rol !== Rol.ADMIN) {
+    if (!decoded || (decoded.rol !== Rol.ADMIN && decoded.rol !== Rol.SUPERADMIN)) {
         redirect("/dashboard/agent");
     }
 
@@ -98,10 +98,10 @@ export default async function AdminDashboardPage() {
         recentEventos,
     ] = await Promise.all([
         prisma.evento.count({
-            where: { createdAt: { gte: startOfToday } },
+            where: { createdAt: { gte: startOfToday }, eliminadoAt: { isSet: false } },
         }),
         prisma.evento.count({
-            where: { estado: EstadoEvento.PENDIENTE },
+            where: { estado: EstadoEvento.PENDIENTE, eliminadoAt: { isSet: false } },
         }),
         prisma.evento.count({
             where: {
@@ -112,11 +112,13 @@ export default async function AdminDashboardPage() {
                         EstadoEvento.EN_EL_LUGAR,
                     ],
                 },
+                eliminadoAt: { isSet: false },
             },
         }),
         fetchAgentsOnline(),
         fetchChartData(7),
         prisma.evento.findMany({
+            where: { eliminadoAt: { isSet: false } },
             orderBy: { createdAt: "desc" },
             take: 10,
             include: { creador: true, asignaciones: { include: { agente: true } } },

@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
         since.setUTCDate(since.getUTCDate() - (days - 1));
 
         const eventos = await prisma.evento.findMany({
-            where: { createdAt: { gte: since } },
+            where: { createdAt: { gte: since }, eliminadoAt: { isSet: false } },
             select: { createdAt: true },
         });
 

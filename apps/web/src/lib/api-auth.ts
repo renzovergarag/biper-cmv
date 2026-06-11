@@ -44,7 +44,26 @@ export async function requireAdmin(request: NextRequest): Promise<AuthResult> {
     const result = await requireAuth(request);
     if (!result.ok) return result;
 
-    if (result.user.rol !== Rol.ADMIN) {
+    if (result.user.rol !== Rol.ADMIN && result.user.rol !== Rol.SUPERADMIN) {
+        return {
+            ok: false,
+            response: NextResponse.json(
+                { error: "Acceso denegado" },
+                { status: 403 }
+            ),
+        };
+    }
+
+    return result;
+}
+
+export async function requireSuperAdmin(
+    request: NextRequest
+): Promise<AuthResult> {
+    const result = await requireAuth(request);
+    if (!result.ok) return result;
+
+    if (result.user.rol !== Rol.SUPERADMIN) {
         return {
             ok: false,
             response: NextResponse.json(

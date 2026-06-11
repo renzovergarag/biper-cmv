@@ -11,7 +11,11 @@ export default async function AdminUsersPage() {
     if (!token) redirect("/login");
 
     const decoded = await verifyToken(token);
-    if (!decoded || decoded.rol !== Rol.ADMIN) redirect("/dashboard");
+    if (
+        !decoded ||
+        (decoded.rol !== Rol.ADMIN && decoded.rol !== Rol.SUPERADMIN)
+    )
+        redirect("/dashboard");
 
-    return <UsersPageClient />;
+    return <UsersPageClient isSuperAdmin={decoded.rol === Rol.SUPERADMIN} />;
 }

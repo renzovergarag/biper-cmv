@@ -8,6 +8,10 @@ export async function verifyAdmin(
     const token = request.cookies.get("token")?.value;
     if (!token) return null;
     const decoded = await verifyToken(token);
-    if (!decoded || decoded.rol !== Rol.ADMIN) return null;
+    if (
+        !decoded ||
+        (decoded.rol !== Rol.ADMIN && decoded.rol !== Rol.SUPERADMIN)
+    )
+        return null;
     return decoded;
 }

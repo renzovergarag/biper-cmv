@@ -58,10 +58,10 @@ export async function GET(request: NextRequest) {
         const [eventosHoy, pendientesSinAsignar, enProceso, agentes] =
             await Promise.all([
                 prisma.evento.count({
-                    where: { createdAt: { gte: startOfToday } },
+                    where: { createdAt: { gte: startOfToday }, eliminadoAt: { isSet: false } },
                 }),
                 prisma.evento.count({
-                    where: { estado: EstadoEvento.PENDIENTE },
+                    where: { estado: EstadoEvento.PENDIENTE, eliminadoAt: { isSet: false } },
                 }),
                 prisma.evento.count({
                     where: {
@@ -72,6 +72,7 @@ export async function GET(request: NextRequest) {
                                 EstadoEvento.EN_EL_LUGAR,
                             ],
                         },
+                        eliminadoAt: { isSet: false },
                     },
                 }),
                 fetchAgentsOnline(),

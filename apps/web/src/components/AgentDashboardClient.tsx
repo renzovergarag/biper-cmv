@@ -107,12 +107,19 @@ export default function AgentDashboardClient({
             });
         };
 
+        const handleEliminado = ({ id }: { id: string }) => {
+            setEventos((prev) => prev.filter((e) => e.id !== id));
+            setPendientes((prev) => prev.filter((e) => e.id !== id));
+        };
+
         socket.on("evento:nuevo", handleNuevo);
         socket.on("evento:actualizado", handleActualizado);
+        socket.on("evento:eliminado", handleEliminado);
 
         return () => {
             socket.off("evento:nuevo", handleNuevo);
             socket.off("evento:actualizado", handleActualizado);
+            socket.off("evento:eliminado", handleEliminado);
         };
     }, [socket, userId]);
 

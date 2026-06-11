@@ -20,7 +20,11 @@ export function authenticateSocket(socket: Socket, next: (err?: Error) => void) 
     return next(new Error("Token inválido"));
   }
 
-  if (decoded.rol !== "AGENT" && decoded.rol !== "ADMIN") {
+  if (
+    decoded.rol !== "AGENT" &&
+    decoded.rol !== "ADMIN" &&
+    decoded.rol !== "SUPERADMIN"
+  ) {
     return next(new Error("Acceso denegado: rol no autorizado"));
   }
 

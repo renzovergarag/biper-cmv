@@ -11,11 +11,13 @@ import EventDetailModal from "./EventDetailModal";
 interface AdminDashboardClientProps {
     initialEventos: EventoWithRelations[];
     socketUrl: string;
+    isSuperAdmin?: boolean;
 }
 
 export default function AdminDashboardClient({
     initialEventos,
     socketUrl,
+    isSuperAdmin = false,
 }: AdminDashboardClientProps) {
     const [eventos, setEventos] =
         useState<EventoWithRelations[]>(initialEventos);
@@ -61,12 +63,22 @@ export default function AdminDashboardClient({
             }
         };
 
+        const handleEliminado = ({ id }: { id: string }) => {
+            setEventos((prev) => prev.filter((e) => e.id !== id));
+            if (selectedEventId === id) {
+                setModalOpen(false);
+                setSelectedEventId(null);
+            }
+        };
+
         socket.on("evento:nuevo", handleNuevo);
         socket.on("evento:actualizado", handleActualizado);
+        socket.on("evento:eliminado", handleEliminado);
 
         return () => {
             socket.off("evento:nuevo", handleNuevo);
             socket.off("evento:actualizado", handleActualizado);
+            socket.off("evento:eliminado", handleEliminado);
         };
     }, [socket, selectedEventId]);
 
@@ -104,6 +116,7 @@ export default function AdminDashboardClient({
                 onOpenChange={handleModalOpenChange}
                 refreshVersion={refreshVersion}
                 isAdmin
+                isSuperAdmin={isSuperAdmin}
             />
         </div>
     );

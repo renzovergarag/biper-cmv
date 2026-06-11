@@ -60,7 +60,7 @@ export default function ConnectedAgentsPanel() {
     const agentes = useConnectedAgents();
 
     if (isLoading) return null;
-    if (user?.rol !== "ADMIN") return null;
+    if (user?.rol !== "ADMIN" && user?.rol !== "SUPERADMIN") return null;
 
     return (
         <>

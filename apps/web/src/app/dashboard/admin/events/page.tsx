@@ -15,11 +15,15 @@ export default async function AdminEventsPage() {
 
     const decoded = await verifyToken(token);
 
-    if (!decoded || decoded.rol !== Rol.ADMIN) {
+    if (
+        !decoded ||
+        (decoded.rol !== Rol.ADMIN && decoded.rol !== Rol.SUPERADMIN)
+    ) {
         redirect("/dashboard/agent");
     }
 
     const eventos = await prisma.evento.findMany({
+        where: { eliminadoAt: { isSet: false } },
         orderBy: { createdAt: "desc" },
         include: { creador: true, asignaciones: { include: { agente: true } } },
     });
@@ -31,6 +35,7 @@ export default async function AdminEventsPage() {
         <AdminDashboardClient
             initialEventos={eventos}
             socketUrl={socketUrl}
+            isSuperAdmin={decoded.rol === Rol.SUPERADMIN}
         />
     );
 }

@@ -16,7 +16,11 @@ import UserFormModal from "@/components/UserFormModal";
 import { Plus } from "lucide-react";
 import type { UserListItem } from "@/types";
 
-export default function UsersPageClient() {
+export default function UsersPageClient({
+    isSuperAdmin = false,
+}: {
+    isSuperAdmin?: boolean;
+}) {
     const [usuarios, setUsuarios] = useState<UserListItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [modalOpen, setModalOpen] = useState(false);
@@ -147,7 +151,8 @@ export default function UsersPageClient() {
                                         <TableCell>
                                             <Badge
                                                 variant={
-                                                    usuario.rol === "ADMIN"
+                                                    usuario.rol === "ADMIN" ||
+                                                    usuario.rol === "SUPERADMIN"
                                                         ? "default"
                                                         : "secondary"
                                                 }
@@ -230,7 +235,8 @@ export default function UsersPageClient() {
                                     </span>
                                     <Badge
                                         variant={
-                                            usuario.rol === "ADMIN"
+                                            usuario.rol === "ADMIN" ||
+                                            usuario.rol === "SUPERADMIN"
                                                 ? "default"
                                                 : "secondary"
                                         }
@@ -288,6 +294,7 @@ export default function UsersPageClient() {
                 onClose={() => setModalOpen(false)}
                 onSave={fetchUsuarios}
                 usuario={editingUser}
+                isSuperAdmin={isSuperAdmin}
             />
         </div>
     );

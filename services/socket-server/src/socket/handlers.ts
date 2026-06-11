@@ -42,7 +42,7 @@ export function registerSocketHandlers(io: Server) {
     io.on("connection", (socket: Socket) => {
         const user = socket.user;
 
-        if (user.rol === "ADMIN") {
+        if (user.rol === "ADMIN" || user.rol === "SUPERADMIN") {
             console.log(`Admin conectado: ${user.email} (${user.sub})`);
 
             socket.join("admin");

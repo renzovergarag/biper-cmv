@@ -12,6 +12,7 @@ generator client {
 enum Rol {
   ADMIN
   AGENT
+  SUPERADMIN
 }
 
 enum NivelUrgencia {
@@ -39,20 +40,21 @@ enum EstadoAsignacion {
 }
 
 model User {
-  id               String   @id @default(auto()) @map("_id") @db.ObjectId
-  email            String   @unique
-  password         String
-  nombre           String
-  rol              Rol
-  activo           Boolean  @default(true)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  password  String
+  nombre    String
+  rol       Rol
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  eventosCreados   Evento[] @relation("Creador")
-  asignaciones     AsignacionEvento[] @relation("AgenteAsignaciones")
-  logs             LogAuditoria[]
-  historialEstado  EstadoHistorial[]
-  suscripcionesPush SuscripcionPush[] @relation("SuscripcionesPush")
+  eventosCreados    Evento[]           @relation("Creador")
+  eventosEliminados Evento[]           @relation("EventosEliminados")
+  asignaciones      AsignacionEvento[] @relation("AgenteAsignaciones")
+  logs              LogAuditoria[]
+  historialEstado   EstadoHistorial[]
+  suscripcionesPush SuscripcionPush[]  @relation("SuscripcionesPush")
 }
 
 model Evento {
@@ -65,48 +67,53 @@ model Evento {
   telefonoContacto String?
   estado           EstadoEvento  @default(PENDIENTE)
 
-  creadorId        String        @db.ObjectId
-  creador          User          @relation("Creador", fields: [creadorId], references: [id])
+  creadorId String @db.ObjectId
+  creador   User   @relation("Creador", fields: [creadorId], references: [id])
 
-  asignaciones     AsignacionEvento[]
+  asignaciones AsignacionEvento[]
 
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-  assignedAt       DateTime?
-  resolvedAt       DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  assignedAt DateTime?
+  resolvedAt DateTime?
 
-  logs             LogAuditoria[] @relation("EventoLogs")
+  eliminadoAt    DateTime?
+  eliminadoPorId String?   @db.ObjectId
+  eliminadoPor   User?     @relation("EventosEliminados", fields: [eliminadoPorId], references: [id])
+
+  logs             LogAuditoria[]    @relation("EventoLogs")
   estadosHistorial EstadoHistorial[]
 
   @@index([estado])
   @@index([creadorId])
   @@index([nivelUrgencia])
   @@index([createdAt])
+  @@index([eliminadoAt])
 }
 
 model EstadoHistorial {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  eventoId  String   @db.ObjectId
-  evento    Evento   @relation(fields: [eventoId], references: [id])
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
+  eventoId  String       @db.ObjectId
+  evento    Evento       @relation(fields: [eventoId], references: [id])
   estado    EstadoEvento
-  usuarioId String   @db.ObjectId
-  usuario   User     @relation(fields: [usuarioId], references: [id])
-  timestamp DateTime @default(now())
+  usuarioId String       @db.ObjectId
+  usuario   User         @relation(fields: [usuarioId], references: [id])
+  timestamp DateTime     @default(now())
   notas     String?
 }
 
 model LogAuditoria {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  accion      String
-  entidad     String
-  entidadId   String   @db.ObjectId
-  usuarioId   String   @db.ObjectId
-  usuario     User     @relation(fields: [usuarioId], references: [id])
-  detalle     Json?
-  timestamp   DateTime @default(now())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  accion    String
+  entidad   String
+  entidadId String   @db.ObjectId
+  usuarioId String   @db.ObjectId
+  usuario   User     @relation(fields: [usuarioId], references: [id])
+  detalle   Json?
+  timestamp DateTime @default(now())
 
-  eventoId    String?  @db.ObjectId
-  evento      Evento?  @relation("EventoLogs", fields: [eventoId], references: [id])
+  eventoId String? @db.ObjectId
+  evento   Evento? @relation("EventoLogs", fields: [eventoId], references: [id])
 
   @@index([entidad, entidadId])
   @@index([usuarioId])

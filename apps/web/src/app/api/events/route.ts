@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
         const page = parseInt(searchParams.get("page") || "1", 10);
         const limit = parseInt(searchParams.get("limit") || "10", 10);
 
-        const where: Prisma.EventoWhereInput = {};
+        const where: Prisma.EventoWhereInput = { eliminadoAt: { isSet: false } };
         if (estado) where.estado = estado;
         if (nivelUrgencia) where.nivelUrgencia = nivelUrgencia;
         if (agenteIdFilter) {
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Token inválido" }, { status: 401 });
         }
 
-        if (decoded.rol !== Rol.ADMIN) {
+        if (decoded.rol !== Rol.ADMIN && decoded.rol !== Rol.SUPERADMIN) {
             return NextResponse.json({ error: "Acceso denegado" }, { status: 403 });
         }
 
