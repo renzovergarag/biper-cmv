@@ -23,7 +23,7 @@ export default async function AdminEventsPage() {
     }
 
     const eventos = await prisma.evento.findMany({
-        where: { eliminadoAt: null },
+        where: { eliminadoAt: { isSet: false } },
         orderBy: { createdAt: "desc" },
         include: { creador: true, asignaciones: { include: { agente: true } } },
     });

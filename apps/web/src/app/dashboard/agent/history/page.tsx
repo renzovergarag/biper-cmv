@@ -19,7 +19,7 @@ export default async function AgentHistoryPage() {
 
     const eventos = await prisma.evento.findMany({
         where: {
-            eliminadoAt: null,
+            eliminadoAt: { isSet: false },
             asignaciones: {
                 some: { agenteId: decoded.sub, estado: "RESUELTO" },
             },

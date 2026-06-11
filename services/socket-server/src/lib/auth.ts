@@ -10,7 +10,7 @@ export interface SocketJWTPayload {
   sub: string;
   email: string;
   nombre: string;
-  rol: "ADMIN" | "AGENT" | "INTERNAL";
+  rol: "ADMIN" | "AGENT" | "SUPERADMIN" | "INTERNAL";
   iat: number;
   exp: number;
 }
