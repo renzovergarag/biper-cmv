@@ -20,6 +20,12 @@ interface Props {
 
 const ESTADOS_UNIBLES = ["PENDIENTE", "ASIGNADO", "EN_RUTA", "EN_EL_LUGAR"];
 
+const ESTADOS_EN_CURSO: EstadoAsignacion[] = [
+    EstadoAsignacion.ASIGNADO,
+    EstadoAsignacion.EN_RUTA,
+    EstadoAsignacion.EN_EL_LUGAR,
+];
+
 function formatCreatedAt(date: string | Date): string {
     const d = typeof date === "string" ? new Date(date) : date;
     return d.toLocaleDateString("es-ES", {
@@ -43,6 +49,11 @@ export default function AgentDashboardClient({
     const tieneAsignacionActiva = (e: EventoWithRelations) =>
         e.asignaciones.some(
             (a) => a.agenteId === userId && a.estado !== "ABANDONADO"
+        );
+
+    const tieneAsignacionEnCurso = (e: EventoWithRelations) =>
+        e.asignaciones.some(
+            (a) => a.agenteId === userId && ESTADOS_EN_CURSO.includes(a.estado)
         );
 
     const miEstado = (e: EventoWithRelations): EstadoAsignacion | undefined =>
@@ -86,7 +97,7 @@ export default function AgentDashboardClient({
             evento: EventoWithRelations;
         }) => {
             setEventos((prev) => {
-                if (tieneAsignacionActiva(evento)) {
+                if (tieneAsignacionEnCurso(evento)) {
                     return prev.some((e) => e.id === evento.id)
                         ? prev.map((e) => (e.id === evento.id ? evento : e))
                         : [evento, ...prev];
@@ -132,6 +143,8 @@ export default function AgentDashboardClient({
         if (!socket) return;
         socket.emit("evento:actualizar-estado", { eventoId, nuevoEstado });
     };
+
+    const eventosEnCurso = eventos.filter(tieneAsignacionEnCurso);
 
     return (
         <div className="mx-auto max-w-md px-4 py-6">
@@ -201,19 +214,19 @@ export default function AgentDashboardClient({
 
             <div>
                 <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-3">
-                    Mis Eventos
+                    Eventos en curso
                 </h3>
-                {eventos.length === 0 ? (
+                {eventosEnCurso.length === 0 ? (
                     <Card>
                         <CardContent className="p-4">
                             <p className="text-muted-foreground text-sm">
-                                No tienes eventos asignados.
+                                No tienes eventos en curso.
                             </p>
                         </CardContent>
                     </Card>
                 ) : (
                     <div className="space-y-3">
-                        {eventos.map((evento) => {
+                        {eventosEnCurso.map((evento) => {
                             const estadoAgente = miEstado(evento);
                             return (
                                 <Card key={evento.id}>

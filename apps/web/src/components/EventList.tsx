@@ -173,7 +173,7 @@ export default function EventList({
                                     <AddressLink
                                         direccion={evento.direccionExacta}
                                         coordenadas={evento.coordenadas as { lat: number; lng: number } | null | undefined}
-                                        className="text-sm"
+                                        className="text-sm text-right justify-end"
                                     />
                                 </div>
                             </div>
