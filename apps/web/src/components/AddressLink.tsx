@@ -30,12 +30,12 @@ export function AddressLink({
         onClick={() => setOpen(true)}
         aria-label={`Abrir ${trimmed} en una app de mapas`}
         className={cn(
-          "inline-flex items-center gap-1 text-left text-primary hover:underline focus:underline focus:outline-none",
+          "inline-flex items-start gap-1 max-w-full text-left text-primary hover:underline focus:underline focus:outline-none",
           className
         )}
       >
-        {showIcon && <MapPin className="h-4 w-4 shrink-0" aria-hidden />}
-        <span className="truncate">{trimmed}</span>
+        {showIcon && <MapPin className="h-4 w-4 shrink-0 mt-0.5" aria-hidden />}
+        <span className="min-w-0 break-words">{trimmed}</span>
       </button>
       <MapsActionSheet
         open={open}
