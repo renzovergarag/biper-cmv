@@ -38,7 +38,7 @@ export default function AgentDashboardClient({
     const [eventos, setEventos] =
         useState<EventoWithRelations[]>(initialEventos);
     const [pendientes, setPendientes] = useState<EventoWithRelations[]>([]);
-    const { socket, connected } = useSocket(socketUrl);
+    const { socket } = useSocket(socketUrl);
 
     const tieneAsignacionActiva = (e: EventoWithRelations) =>
         e.asignaciones.some(
@@ -136,22 +136,10 @@ export default function AgentDashboardClient({
     return (
         <div className="mx-auto max-w-md px-4 py-6">
             <PushNotificationsBanner />
-            <div className="flex justify-between items-center mb-4">
+            <div className="mb-4">
                 <h2 className="text-xl font-bold text-foreground">
                     Panel de Agente
                 </h2>
-                <div className="flex items-center gap-2">
-                    <div
-                        className={`h-3 w-3 rounded-full ${
-                            connected
-                                ? "bg-green-500 animate-pulse"
-                                : "bg-destructive"
-                        }`}
-                    />
-                    <span className="text-sm text-muted-foreground">
-                        {connected ? "Conectado" : "Desconectado"}
-                    </span>
-                </div>
             </div>
 
             <div className="mb-8">
