@@ -1,8 +1,17 @@
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { verifyToken } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 
-export default function Home() {
+export default async function Home() {
+    const token = cookies().get("token")?.value;
+
+    if (token && (await verifyToken(token))) {
+        redirect("/dashboard");
+    }
+
     return (
         <div className="min-h-svh flex items-center justify-center bg-muted/40 p-6">
             <div className="w-full max-w-sm flex flex-col items-center gap-6 text-center">
