@@ -4,6 +4,8 @@ Sistema para gestionar eventos reportados desde distintas fuentes y avisar a los
 
 El funcionamiento es directo: cuando llega un aviso —una llamada telefónica, un reporte por redes sociales u otra vía—, quien coordina lo registra en el sistema y asigna a los agentes que corresponda. Ellos reciben una notificación en el teléfono con la dirección del lugar. A partir de ahí el sistema acompaña el evento hasta su cierre, registrando los tiempos y los responsables de cada etapa.
 
+![Panel principal de viper-cmv, con los indicadores del día, el gráfico de eventos creados y la lista de eventos recientes](docs/img/dashboard.png)
+
 ## Para qué sirve
 
 Cuando la coordinación se apoya únicamente en llamadas o grupos de mensajería, resulta difícil mantener el registro de quién acudió a cada lugar, cuánto demoró en llegar y en qué momento se dio por cerrada la atención. El sistema atiende tres necesidades:
