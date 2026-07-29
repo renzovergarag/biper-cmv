@@ -8,6 +8,8 @@
 
 **Tech Stack:** GitHub Actions (self-hosted runner), PM2, Nginx, Node.js 20+, MongoDB, Prisma, Next.js 14, Socket.io.
 
+> **Nota (29-jul-2026):** documento histórico. Los puertos de abajo (3001 web / 4000 socket) siguen siendo correctos, pero los pasos de instalación clonan el repo en `/var/www/viper-cmv`; en la práctica el runner descarga el código con `actions/checkout` y el deploy vive en `/var/www/viper-cmv/actions-runner/_work/viper-cmv/viper-cmv/`. Esa carpeta clonada a mano ya no existe. Ver la sección **Producción** de `AGENTS.md`.
+
 ---
 
 ## Task 1: Update PM2 Ecosystem Config (Port 3001)
