@@ -3,6 +3,13 @@
 **Fecha:** 2026-05-04
 **Scope:** Definir el flujo completo de CI/CD y despliegue para el monorepo `biper-cmv` (Next.js + Socket.io + MongoDB) en un VPS Ubuntu sin Docker.
 
+> **Nota (29-jul-2026):** documento histórico, conservado como registro de la decisión original. Dos cosas cambiaron al implementarlo y **no** se reflejan en el texto de abajo:
+>
+> 1. **La web quedó en el puerto 3001**, no 3000 — el 3000 ya estaba ocupado por otro proyecto en el mismo VPS. El plan de implementación (`docs/superpowers/plans/2026-05-04-vps-deployment.md`) ya recoge el 3001.
+> 2. **El código no se clona en `/var/www/viper-cmv`.** Al usar un runner self-hosted con `actions/checkout`, el deploy vive en el workspace del runner: `/var/www/viper-cmv/actions-runner/_work/viper-cmv/viper-cmv/`.
+>
+> Para la topología real de producción, ver la sección **Producción** de `AGENTS.md`.
+
 ---
 
 ## 1. Contexto y Arquitectura
