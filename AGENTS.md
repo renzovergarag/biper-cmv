@@ -63,16 +63,20 @@ Se necesitan archivos `.env` en **tres ubicaciones**:
 
 ## Producción
 
-Verificado el 29-jul-2026. Si vas a diagnosticar una caída, esto es lo que necesitas:
+Migrado el 24-ago-2026 del VPS a un servidor on-prem del DAS. Si vas a diagnosticar una caída, esto es lo que necesitas:
 
-- **URL:** `https://viper.cmvalparaiso.cl` — VPS Ubuntu, acceso por SSH.
-- **El código NO está en `/var/www/viper-cmv`.** Esa carpeta solo contiene el `actions-runner` de GitHub Actions. El deploy vive en el workspace del runner:
+- **URL:** `https://viper.cmvalparaiso.cl` → **200.54.81.54** (DNAT del firewall del DAS).
+- **Servidor:** nodo Tailscale `server-das`, hostname `informesdiarios`, `ssh informesdiarios` (100.107.10.105 / LAN 192.168.1.191), Ubuntu 26.04. Aloja además `gestion-demanda`, `saludbot` y `listas-de-chequeo`: cualquier cambio a nivel de sistema (zona horaria, MongoDB, nginx, PM2) los afecta.
+- **El código NO está en una ruta propia.** El workflow usa `actions/checkout` sobre un runner self-hosted, así que el deploy vive en el workspace del runner:
   `/var/www/viper-cmv/actions-runner/_work/viper-cmv/viper-cmv/`
-  El workflow usa `actions/checkout` sobre un runner self-hosted, así que el código queda donde el runner lo descarga, no en una ruta propia.
-- **Puertos:** `viper-web` en **3001** (no 3000) y `viper-socket` en **4000**. El 3000 lo ocupa **otro proyecto** alojado en el mismo VPS, que comparte el mismo PM2 del usuario de deploy. Un 502 en viper se diagnostica mirando el 3001.
-- **Nginx:** el vhost activo (`/etc/nginx/sites-enabled/viper-cmv`) deriva de `nginx/viper-cmv.conf` pero no es idéntico — Certbot le inyectó la configuración SSL al emitir el certificado. No sobrescribir el del servidor con el del repo sin revisar esa diferencia.
-- **PM2:** corre bajo `pm2-renzo.service` (`ExecStart=pm2 resurrect`, `ExecStop=pm2 kill`). La lista de procesos a resucitar vive en `~/.pm2/dump.pm2` y **solo se actualiza con `pm2 save`**. Si el dump no incluye `viper-web` y `viper-socket`, la app no vuelve tras un reinicio del servidor aunque todo lo demás esté bien — eso causó la caída del 29-jul-2026. El workflow de deploy corre `pm2 save` para mantenerlo sincronizado.
-- **Actualizaciones automáticas:** `apt-daily-upgrade` está activo. Una actualización de paquetes base (glibc, por ejemplo) reinicia servicios, incluido PM2. El deploy debe tolerar reinicios no anunciados.
+- **Puertos:** `viper-web` en **3001** y `viper-socket` en **4000**. En ese host, 3010, 3020 y 8000 los ocupan las otras apps. Un 502 en viper se diagnostica mirando el 3001.
+- **Nginx:** `/etc/nginx/sites-available/viper-cmv`, con la configuración SSL inyectada por Certbot (lineage `viper.cmvalparaiso.cl`). No sobrescribirlo con el del repo sin revisar esa diferencia.
+- **MongoDB:** 7.0 nativo en el 27017, replica set `rs0` de un solo nodo con keyFile — Prisma exige replica set. La config previa a la migración quedó en `/etc/mongod.conf.bak-premigracion`.
+- **Zona horaria:** el host corre en **UTC**. La TZ de la app se fija por proceso en `ecosystem.config.js` (`TZ: "America/Santiago"`); no cambiar la del sistema.
+- **PM2:** corre bajo `pm2-renzo.service` (`ExecStart=pm2 resurrect`, `ExecStop=pm2 kill`), compartido con las otras tres apps. La lista de procesos a resucitar vive en `~/.pm2/dump.pm2` y **solo se actualiza con `pm2 save`**. Si el dump no incluye `viper-web` y `viper-socket`, la app no vuelve tras un reinicio aunque todo lo demás esté bien — eso causó la caída del 29-jul-2026. El workflow de deploy corre `pm2 save` para mantenerlo sincronizado.
+- **Runner:** `informesdiarios-viper` (servicio `actions.runner.cormuval-viper-cmv.informesdiarios-viper`). El repo canónico es `cormuval/viper-cmv`; `renzovergarag/viper-cmv` es el nombre antiguo y redirige al mismo repo.
+- **VPS anterior (`ssh vps1`, 46.202.151.191):** conservado como respaldo. Procesos PM2 detenidos, runner detenido y deshabilitado, y su vhost convertido en proxy hacia 200.54.81.54 para clientes con DNS cacheado. Su certificado vence el **2-oct-2026** y ya no puede renovarse, así que ese proxy debe retirarse antes de esa fecha.
+- **Actualizaciones automáticas:** `unattended-upgrades` está activo. Una actualización de paquetes base reinicia servicios, incluido PM2. El deploy debe tolerar reinicios no anunciados.
 
 ## UI / Front-end
 
